@@ -87,6 +87,7 @@ public class testForCode {
         //dp[i][j] 代表 A 的前 i个和 B的前 j个能否匹配
         //字符串为空的情况是特殊情况
         dp[0][0] = true;
+        //当字符串为空时，dp[0][]可以推
         for (int i = 1; i <= n; i++) {
             if (p.charAt(i - 1) == '*') {
                 dp[0][i] = dp[0][i - 2];
@@ -389,6 +390,65 @@ public class testForCode {
         return head;
 
     }
+    /*
+    22：链表中倒数第k个节点
+    求链表中倒数第k个节点。链表的尾节点定义为倒数第1个节点。
+
+    思路：使用两个距离为k的指针向右移动
+    * */
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+        ListNode start = head;
+        ListNode end = head;
+        for (int i = 0; i < k; i++) {
+            end = end.next;
+        }
+        while (end != null) {
+            start = start.next;
+            end = end.next;
+        }
+        return start;
+    }
+
+    /*
+    * 23：链表中环的入口节点
+    题目要求：
+    假设一个链表中包含环，请找出入口节点。若没有环则返回null。
+    *
+    *
+    * 思路：
+    使用双指针，一个指针 fast 每次移动两个节点，一个指针 slow 每次移动一个节点。因为存在环，
+    所以两个指针必定相遇在环中的某个节点上。假设相遇点在下图的 z1 位置，
+    此时 fast 移动的节点数为 x+2y+z，slow 为 x+y，由于 fast 速度比 slow 快一倍，因此 x+2y+z=2(x+y)，得到 x=z。
+    在相遇点，slow 要到环的入口点还需要移动 z 个节点，如果让 fast 重新从头开始移动，并且速度变为每次移动一个节点，
+    那么它到环入口点还需要移动 x 个节点。在上面已经推导出 x=z，因此 fast 和 slow 将在环入口点相遇。
+    * */
+    public ListNode entryNodeOfLoop(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            //相等的话说明相遇了，证明有环
+            if (fast == slow) {
+                break;
+            }
+        }
+        // fast到了链表尾部,说明链表无环
+        if (fast == null || fast.next == null) {
+            return null;
+        }
+        //fast重新出发
+        fast = head;
+        while (fast != slow) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return fast;
+    }
+
 
 
     public static void main(String[] args) {
