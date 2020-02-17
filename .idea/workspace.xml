@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7f5c0a7e-05d2-4031-bfe2-1f783b5aecd0" name="Default Changelist" comment="" />
+    <list default="true" id="7f5c0a7e-05d2-4031-bfe2-1f783b5aecd0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/ListNode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/META-INF/testCode.kotlin_module" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/TestCode$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/TestCode$ListNode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/TestCode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/arraySort.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/testForCode$ListNode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/testCode/testForCode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testCode.iml" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -50,6 +61,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -70,6 +84,7 @@
     <option name="width" value="980" />
     <option name="height" value="1040" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -204,8 +219,16 @@
       <workItem from="1581851591588" duration="391000" />
       <workItem from="1581852016640" duration="60000" />
       <workItem from="1581852109190" duration="3130000" />
-      <workItem from="1581927319455" duration="1429000" />
+      <workItem from="1581927319455" duration="1683000" />
     </task>
+    <task id="LOCAL-00001" summary="刷题记录">
+      <created>1581929687463</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1581929687463</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -214,10 +237,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="278334000" />
+    <option name="totallyTimeSpent" value="278588000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2077748" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -252,6 +275,10 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="刷题记录" />
+    <option name="LAST_COMMIT_MESSAGE" value="刷题记录" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
