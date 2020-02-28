@@ -13,6 +13,8 @@ public class treeDemo {
         }
     }
 
+
+
     /**
      * 前序（递归，非递归），中序（递归，非递归），后序（递归，非递归），层序
      */
@@ -62,7 +64,7 @@ public class treeDemo {
         return list;
     }
 
-    //中序非遍历
+    //中序非递归
     public List<Integer> inOrderIn(TreeNode<Integer> node) {
         //stack栈顶元素永远为cur父节点
         Stack<TreeNode<Integer>> stack = new Stack<>();
@@ -83,6 +85,8 @@ public class treeDemo {
         }
         return list;
     }
+
+
 
     //**************后序********************
     public List<Integer> postOrder(TreeNode<Integer> node) {
@@ -163,13 +167,16 @@ public class treeDemo {
         return list;
     }
 
+
+
+
     public static void main(String[] args) {
         //            1
         //              \
         //               2
         //              /
         //             3
-        //pre->123  in->132   post->321  level->123
+        //preOr->123  in->132   post->321  level->123
         TreeNode<Integer> root = new TreeNode<Integer>(1);
         root.right = new TreeNode<Integer>(2);
         root.right.left = new TreeNode<Integer>(3);

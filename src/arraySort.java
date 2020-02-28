@@ -18,7 +18,7 @@ public class arraySort {
         }
         for (int i = 0; i < arr.length - 1; i++) {
             // 将 i+1 位置的数插入 0 到 i 之间的数组，从后往前遍历
-            // current 指 i+1 的位置元素，pre 指 0 到 i 中依次向前遍历的指针
+            // current 指 i+1 的位置元素，preOr 指 0 到 i 中依次向前遍历的指针
             int cur = arr[i + 1];
             int pre = i;
             while (pre >= 0 && cur < arr[pre]) {
@@ -26,7 +26,7 @@ public class arraySort {
                 pre--;
             }
             // 最后将原来 i+1 位置的元素放入现在 0 到 i+1 之间数组中正确的位置上
-            // pre+1 是因为刚才循环结束时又自减了一次
+            // preOr+1 是因为刚才循环结束时又自减了一次
             arr[pre + 1] = cur;
         }
         return arr;
@@ -43,8 +43,8 @@ public class arraySort {
         int current, gap = arr.length / 2;
         while (gap > 0) {
             for (int i = gap; i < arr.length; i++) {
-                // 从pre为0开始将 pre+gap 位置的数插入 0 到 pre 之间“同组”的数组，从后往前遍历
-                // current 指 pre+gap 的位置元素
+                // 从pre为0开始将 preOr+gap 位置的数插入 0 到 preOr 之间“同组”的数组，从后往前遍历
+                // current 指 preOr+gap 的位置元素
                 current = arr[i];
                 int pre = i - gap;
                 while (pre >= 0 && current < arr[pre]) {
@@ -150,7 +150,7 @@ public class arraySort {
 
     public static void main(String[] args) {
         int[] arr = {1, 11, 5, 6, 2, 9};
-        System.out.println(Arrays.toString(SelectionSort(arr)));
+        System.out.println(Arrays.toString(BubbleSort(arr)));
 
     }
 }
