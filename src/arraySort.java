@@ -18,15 +18,19 @@ public class arraySort {
         }
         for (int i = 0; i < arr.length - 1; i++) {
             // 将 i+1 位置的数插入 0 到 i 之间的数组，从后往前遍历
-            // current 指 i+1 的位置元素，preOr 指 0 到 i 中依次向前遍历的指针
+            // current 指 i+1 的位置元素，pre 指 0 到 i 中依次向前遍历的指针
             int cur = arr[i + 1];
             int pre = i;
+            //遍历到比cur小的元素
             while (pre >= 0 && cur < arr[pre]) {
-                arr[pre + 1] = arr[pre];
                 pre--;
             }
+            // pre+1 是因为刚才循环结束时又自减了一次
+            //将pre到i之间的元素毒往后一位
+            for (int j = i + 1; j > pre; j--) {
+                arr[j] = arr[j - 1];
+            }
             // 最后将原来 i+1 位置的元素放入现在 0 到 i+1 之间数组中正确的位置上
-            // preOr+1 是因为刚才循环结束时又自减了一次
             arr[pre + 1] = cur;
         }
         return arr;
@@ -71,7 +75,7 @@ public class arraySort {
         for (int i = 0; i < arr.length - 1; i++) {
             // 每一轮挑出一个最小的元素，依次与不断增长的 i 位置的元素交换
             int MinIndex = i;
-            for (int j = i+1; j < arr.length; j++) {
+            for (int j = i + 1; j < arr.length; j++) {
                 if (arr[j] < arr[MinIndex])
                     MinIndex = j;
             }
@@ -98,7 +102,7 @@ public class arraySort {
         if (arr.length == 0 || arr.length == 1)
             return arr;
         //1、构建大顶堆,从最后一个非叶子结点开始,是从下而上，自右往左的调整
-        for (int i = arr.length / 2 - 1; i >=0; i--) {
+        for (int i = arr.length / 2 - 1; i >= 0; i--) {
             adjustHeap(arr, i, arr.length);
         }
         //2、交换首尾项，去除末项重新构建大顶堆
@@ -136,7 +140,7 @@ public class arraySort {
     // ****** 5.冒泡排序 ********
     //平均和最差情况 T(n) = O(n2)，最佳情况 T(n) = O(n)。
 
-    public static int[] BubbleSort(int[] arr){
+    public static int[] BubbleSort(int[] arr) {
         for (int i = arr.length - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
                 if (arr[j] > arr[j + 1]) {
@@ -148,9 +152,111 @@ public class arraySort {
 
     }
 
+
+    //***************快速排序*********************
+    /*
+    * - 思路：1．i =L; j = R; 将基准数挖出形成第一个坑a[i]。
+
+            2．j–-由后向前找比它小的数，找到后挖出此数填前一个坑a[i]中。
+
+            3．i++由前向后找比它大的数，找到后也挖出此数填到前一个坑a[j]中。
+
+            4．再重复执行2，3二步，直到i==j，将基准数填入a[i]中。
+    * */
+
+    /**
+     *
+     * @param arr 数组
+     * @param l 左边界
+     * @param r 右边界
+     * @return
+     */
+    public static int[]  quick_sort(int[] arr, int l, int r) {
+        if (l < r) {
+            int i = adjustArray(arr, l, r);//找到挖坑基数，基数左边的数都比基数小
+            //递归调整两个区间
+            quick_sort(arr, l,i - 1);
+            quick_sort(arr, i+1,r);
+        }
+        return arr;
+
+    }
+
+    private static int adjustArray(int[] arr, int l, int r) {
+        int x = arr[l];
+        while (l < r) {
+            // 从右向左找小于x的数来填arr[l]
+            while (l < r&&x <=arr[r]) {
+                r--;
+            }
+            if(l < r)
+            arr[l++] = arr[r];//将arr[r]填到arr[l]中，s[r]就形成了一个新的坑 并且l++
+
+            // 从左向右找大于或等于x的数来填arr[r]
+            while (l < r&&x >= arr[l]) {
+                l++;
+            }
+            if(l < r)
+            arr[r--] = arr[l];//将arr[l]填到arr[r]中，s[l]就形成了一个新的坑 并且r--
+        }
+
+        //退出时，l等于r。将x填到这个坑中。
+        arr[l] = x;
+        return l;
+    }
+
+    // ****** 7.归并排序 ******
+    //归并排序以需要额外空间作为代价，表现比简单选择排序好得多。二路归并排序就是两两排序，然后两个区域一起排序，以此类推。
+    //
+    //归并排序是稳定的。任何情况下 T(n) = O(nlogn)。
+    // 主函数
+    public static int[] MergeSort(int[] arr){
+        if(arr.length == 0 || arr.length ==1)
+            return arr;
+        int []temp = new int[arr.length];//在排序前，先建好一个长度等于原数组长度的临时数组，避免递归中频繁开辟空间
+        arr = sort(arr,0,arr.length-1,temp);
+        return arr;
+    }
+
+    private static int[] sort(int[] arr, int l, int r, int[] temp) {
+        if (l < r) {
+            int mid = (l + r) / 2;
+            sort(arr, l, mid, temp);//左边归并排序，使得左子序列有序
+            sort(arr, mid + 1, r, temp);//右边归并排序，使得右子序列有序
+            merge(arr, l, mid, r, temp);//将两个有序子数组合并操作
+
+        }
+        return arr;
+    }
+
+    private static void merge(int[] arr, int l, int mid, int r, int[] temp) {
+        int i = l;//做序列指针
+        int j = mid+1;//右序列指针
+        int t = 0;//临时数组指针
+        while (i <= mid && j <= r) {
+            if (arr[i] <= arr[j]) {
+                temp[t++] = arr[i++];
+            } else {
+                temp[t++] = arr[j++];
+            }
+        }
+        while (i <= mid) {//将剩余的左序列填充到temp
+            temp[t++] = arr[i++];
+        }
+        while (j <= r) {
+            temp[t++] = arr[j++];//将右序列剩余元素填充进temp中
+        }
+        t = 0;
+        //将temp中的元素全部拷贝到原数组中
+        while(l <= r){
+            arr[l++] = temp[t++];
+        }
+    }
+
+
     public static void main(String[] args) {
         int[] arr = {1, 11, 5, 6, 2, 9};
-        System.out.println(Arrays.toString(BubbleSort(arr)));
+        System.out.println(Arrays.toString(MergeSort(arr)));
 
     }
 }

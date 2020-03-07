@@ -1373,11 +1373,11 @@ public class testForCode {
             return true;
         }
         //判断左子树
-        int mid = left;
         while (postorder[left] < postorder[right]) {
             left++;
         }
-        for (int i = left; i < right; i++) {
+        int mid = left;
+        for (int i = mid; i < right; i++) {
             if (postorder[i] < postorder[right]) {
                 return false;
             }
@@ -1618,6 +1618,7 @@ public class testForCode {
         }
         return count;
     }
+
     //递归方法。root深度比子树的最大深度+1
     public int maxDepth1(TreeNode root) {
         if (root == null) {
@@ -1628,15 +1629,17 @@ public class testForCode {
         return left > right ? left + 1 : right + 1;
 
     }
+
     /*
-    * 55 - II. 平衡二叉树
-    * 输入一棵二叉树的根节点，判断该树是不是平衡二叉树。
-    * 如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。
-    * - 思路：计算树的深度，树的深度=max(左子树深度，右子树深度)+1。在遍历过程中，
-    * 判断左右子树深度相差是否超过1，如果不平衡，则令树的深度=-1，用来表示树不平衡。
-    * 最终根据树的深度是否等于-1来确定是否为平衡树。
-    * */
-    boolean isBalanced=true;
+     * 55 - II. 平衡二叉树
+     * 输入一棵二叉树的根节点，判断该树是不是平衡二叉树。
+     * 如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。
+     * - 思路：计算树的深度，树的深度=max(左子树深度，右子树深度)+1。在遍历过程中，
+     * 判断左右子树深度相差是否超过1，如果不平衡，则令树的深度=-1，用来表示树不平衡。
+     * 最终根据树的深度是否等于-1来确定是否为平衡树。
+     * */
+    boolean isBalanced = true;
+
     public boolean isBalanced(TreeNode root) {
         if (root == null) {
             return true;
@@ -1687,7 +1690,944 @@ public class testForCode {
         return root;
     }
 
+    //****************哈希****************************
+    /*
+     * 03. 数组中重复的数字
+     * - 思路：建立hash表
+     * */
+    public int findRepeatNumber(int[] nums) {
+        int[] hashTable = new int[nums.length];
+        for (int num : nums) {
+            if (hashTable[num] >= 1) {
+                return num;
+            }
+            //没遇到过就相应位置置一
+            hashTable[num] = 1;
+        }
+        return 0;
+    }
 
+    /*
+     * 50. 第一个只出现一次的字符
+     * 在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格
+     * -思路：字符（char）是长度为8的数据类型，共有256中可能，因此哈希表可以用一个长度为256的数组来代替
+     * */
+    public char firstUniqChar(String s) {
+        char[] dic = new char[256];
+        //第一遍遍历添加值
+        for (int i = 0; i < s.length(); i++) {
+            dic[s.charAt(i)]++;
+        }
+        //第二次寻找第一个出现一次的字符
+        for (int i = 0; i < s.length(); i++) {
+            if (dic[s.charAt(i)] == 1) {
+                return s.charAt(i);
+            }
+        }
+        return ' ';
+    }
+
+    //****************位运算**********************
+    //左移，后空缺自动补0；
+    //右移，分为逻辑右移和算数右移
+    //1）逻辑右移 不管是什么类型，空缺自动补0；
+    //2）算数右移 若是无符号数，则空缺补0，若是负数，空缺补1；
+    /*
+    * 15. 二进制中1的个数
+    * 请实现一个函数，输入一个整数，输出该数二进制表示中 1 的个数。
+    * 例如，把 9 表示成二进制是 1001，有 2 位是 1。因此，如果输入 9，则该函数输出 2
+    * -思路：根据 与运算 定义，设二进制数字 nn ，则有：
+        若 n&1=0 ，则 n 二进制 最右一位 为 0 ；因为1除了最后一位各位都为0
+        若 n&1=1 ，则 n 二进制 最右一位 为 1 。
+- Java中无符号右移>>>
+- 把一个整数减去1之后再和原来的整数做位与运算，得到的结果相当于把原整数的二进制表示形式的最右边的1变成0
+    * */
+
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+        int res = 0;
+        while (n != 0) {
+            res += n & 1;
+            n >>>= 1;
+        }
+        return res;
+
+    }
+    //求负数的二进制的步骤：给定一个数，比如 12，我们能求得它的二进制 1100，如何求 −12 的二进制？
+    // 实际上二进制前面有个符号位，正数前面符号位是 0，负数前面符号位是 1，12 的二进制实际上是 01100，
+    // 那么求 −12 的二进制有两步：
+    //
+    //首先把符号位从 0 改成 1，然后对 12 每位取反。变成 10011
+    //最后 +1，即 10011+1 = 10100，这就是 −12 的二进制
+
+    /*
+56：数组中只出现一次的两个数字
+    题目要求：
+    一个整数数组里除了两个数字出现一次，其他数字都出现两次。请找出这两个数字。要求时间复杂度为o(n)，空间复杂度为o(1)。
+- 异或：位数上不相同为1
+-思路：1、全体异或以后得到的得到的数temp，因为有两个数不相同则异或肯定不为0
+        2、求得二进制位最右边一位为1的数字
+        3、用该位是否等于1来划分为两组，再求异或即为所求
+
+- n&-n是求一个二进制数的最低位的1对应的数
+
+        设x=8
+        8的二进制位：0 0 0 0 1 0 0 0
+        对8取反：1 1 1 1 0 1 1 1
+        取反后加1: 1 1 1 1 1 0 0 0
+
+        +8:0 0 0 0 1 0 0 0
+        -8:1 1 1 1 1 0 0 0
+        &: 0 0 0 0 1 0 0 0
+
+        lowbit = 8 & (-8) = 8
+
+    * */
+    public int[] singleNumber(int[] nums) {
+        int temp = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            temp ^= nums[i];
+        }
+        int[] res = new int[2];
+        int lowbit = temp & -temp;
+        for (int i = 0; i < nums.length; i++) {
+            if ((nums[i] & lowbit) == lowbit) {//与lowbit与不变说明改位为0
+                res[0] ^= nums[i];
+            } else {
+                res[1] ^= nums[i];
+            }
+        }
+        return res;
+
+    }
+
+    /*
+     * 56 - II. 数组中数字出现的次数 II
+     * 在一个数组 nums 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+     * -思路：将所有数字的二进制表示的对应位都加起来，如果某一位能被三整除，那么只出现一次的数字在该位为0；反之，为1。
+     * */
+    public int singleNumber2(int[] nums) {
+        int[] bitSum = new int[32];
+        for (int i = 0; i < 32; i++) {
+            bitSum[i] = 0;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            int bitMask = 1;
+            for (int j = 31; j >= 0; j--) {
+                int bit = nums[i] & bitMask;//注意nums[i]&bitMask不一定等于1或者0，有可能等于00010000
+                if (bit != 0) {
+                    bitSum[j]++;
+                }
+                bitMask <<= 1;
+            }
+        }
+        int result = 0;
+        for (int i = 0; i < 32; i++) {
+            result = result << 1;
+            result += (bitSum[i] % 3);
+        }
+        return result;
+    }
+    /*
+    - 收获
+　　1.判断某个数x的第n位（如第3位）上是否为1，
+
+　　　　1）通过 x&00000100 的结果是否为0 来判断。（不能根据是否等于1来判断）
+
+　　　　2）通过（x>>3)&1 是否为0 来判断
+
+　　2.通过number&bitMask的结果是否为0（不能用1判断），bitMask=1不断左移，可以将一个数的二进制存储到32位的数组中。
+
+        int number=100;
+        int bitMask=1;
+        for(int j=31;j>=0;j--) {
+            int bit=number&bitMask;  //注意arr[i]&bitMask不一定等于1或者0，有可能等于00010000
+            if(bit!=0)
+                bits[j]=1;
+            bitMask=bitMask<<1;
+        }
+        　　3.通过以下代码实现二进制转化为数字（注意左移语句的位置）：
+
+        int result=0;
+        for(int i=0;i<32;i++) {
+            result=result<<1;
+            result+=bits[i];
+            //result=result<<1;  //不能放在后面，否则最前面一位就没了
+        }
+    * */
+
+    /*
+    * 65. 不用加减乘除做加法
+    * 写一个函数，求两个整数之和，要求在函数体内不得使用 “+”、“-”、“*”、“/” 四则运算符号。
+    * - 解题思路：不能用四则运算，那只能通过位运算了。
+* 其实四则运算是针对十进制，位运算是针对二进制，都能用于运算。
+*
+    1.两数进行异或：  0011^0101=0110 这个数字其实是把原数中不需进位的二进制位进行了组合
+    2.两数进行与：    0011&0101=0001 这个数字为1的位置表示需要进位，而进位动作是需要向前一位进位
+    3.左移一位：      0001<<1=0010
+    此时我们就完成0011 + 0101 = 0110 + 0010的转换
+    如此转换下去，直到其中一个数字为0时，另一个数字就是原来的两个数字的和
+    * */
+
+
+    public int add(int a, int b) {
+        int sum = a ^ b;
+        int carry = (a & b) << 1;
+        int temp;
+        while (carry != 0) {
+            temp = sum;
+            sum = temp ^ carry;
+            carry = (temp & carry) << 1;
+        }
+        return sum;
+
+    }
+    /*
+    * 不使用新的变量完成交换两个原有变量的值
+    *  //基于加减法
+        int a = 3;
+        int b = 5;
+        a = a + b;
+        b = a - b;
+        a = a - b;
+
+      //基于异或法
+        a = 3;
+        b = 5;
+        a = a ^ b;
+        b = a ^ b;
+        a = a ^ b;
+    * */
+
+    //*******************查找***************************
+    /*
+     * 04. 二维数组中的查找
+     * 在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。
+     * 请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
+     * -思路：从右上角开始搜寻
+     * */
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0)
+            return false;
+        int r = 0;
+        int c = matrix[0].length - 1;//右上角坐标
+        while (r < matrix.length && c >= 0) {
+            if (matrix[r][c] == target) {
+                return true;
+            } else if (matrix[r][c] > target) {
+                c--;
+            } else {
+                r++;
+            }
+        }
+        return false;
+    }
+
+    /*
+    * 11：旋转数组的最小数字
+    题目要求：
+    把一个数组最开始的若干个元素搬到末尾成为数组的旋转，
+    * 如1,2,3,4,5=>3,4,5,1,2；0,1,1,1,1=>1,1,1,0,1；0,1,1,1,1=>1,0,1,1,1。求一个原本递增的数组旋转后的最小数字
+    *
+    * */
+    public int minArray(int[] numbers) {
+        int i = 0;
+        while (i < numbers.length - 1) {
+            if (numbers[i] <= numbers[i + 1]) {
+                i++;
+            } else
+                break;
+        }
+        if (i == numbers.length - 1) {
+            return numbers[0];
+        }
+        return numbers[i + 1];
+    }
+
+    // [3, 4, 5, 1, 2]
+    // [1, 2, 3, 4, 5]
+    // 不能使用左边数与中间数比较，这种做法不能有效地减治
+
+    // [1, 2, 3, 4, 5]
+    // [3, 4, 5, 1, 2]
+    // [2, 3, 4, 5 ,1]
+
+    public int minArray1(int[] numbers) {
+        int len = numbers.length;
+        if (len == 0) {
+            return 0;
+        }
+        int left = 0;
+        int right = len - 1;
+        while (left < right) {
+            int mid = (left + right) >>> 1;
+            if (numbers[mid] > numbers[right]) {
+                // [3, 4, 5, 1, 2]，mid 以及 mid 的左边一定不是最小数字
+                // 下一轮搜索区间是 [mid + 1, right]
+                left = mid + 1;
+            } else if (numbers[mid] == numbers[right]) {
+                // 只能把 right 排除掉，下一轮搜索区间是 [left, right - 1]
+                right = right - 1;
+            } else {
+                // 此时 numbers[mid] < numbers[right]
+                // mid 的右边一定不是最小数字，mid 有可能是，下一轮搜索区间是 [left, mid]
+                right = mid;
+            }
+        }
+
+        // 最小数字一定在数组中，因此不用后处理
+        return numbers[left];
+    }
+
+    /*
+    * 53 - I. 在排序数组中查找数字 I
+    * 统计一个数字在排序数组中出现的次数。
+    * - 注意：二分查找中mid = left + (right - left) / 2;可以防止溢出
+    * 解题思路：
+        排序数组，定位某一个数值的位置，很容易想到二分查找。
+        * 分成两部分：求第一个出现该值的位置start，求最后一个出现该值得位置end，end-start+1即为所求。
+    * */
+    public int search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int first = findFirst(nums, target);
+        if (first == -1) {
+            return 0;
+        }
+        int last = findLast(nums, target);
+        return last - first + 1;
+    }
+
+    private int findLast(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            //在待搜索区间只要有 2 个元素的时候，mid = (left + right) >>> 1 只能取到左边那个元素，
+            // 如果此时边界设置是 left = mid ，区间分不开，因此要改变下取整的行为，在括号里加 1 变成上取整。
+            int mid = left + (right - left + 1) / 2;
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] == target) {
+                //求右边的元素，所以左边肯定不是
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
+
+    private int findFirst(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] == target) {//因为是求最开始出现的元素，所以相同情况下右边肯定不是
+                right = mid;
+            } else {
+                //这时候nums[mid]>right
+                right = mid - 1;
+            }
+        }
+        if (nums[left] == target) {
+            return left;
+        }
+        return -1;//没找到
+    }
+
+    /*
+    * 53 - II. 0～n-1中缺失的数字
+    * 一个长度为n-1的递增排序数组中的所有数字都是唯一的，并且每个数字都在范围0～n-1之内。
+    * 在范围0～n-1内的n个数字中有且只有一个数字不在该数组中，请找出这个数字。
+- 收获
+　　1.对于在排序数组中查找某些特定的数字，可以对二分法稍加改造，实现所需的功能。
+    * */
+
+    public int missingNumber(int[] nums) {
+        int i = 0;
+        for (; i < nums.length; i++) {
+            if (nums[i] != i) {
+                break;
+            }
+        }
+        return i + 1;
+    }
+
+    //使用二分法查找所需元素效率最高
+    //当中间数字等于其下标时，我们在后半部分查找；
+//　　　　当中间数字不等于其下标时，
+//　　　　1）如果中间数字的前一个数字也不等于其下标，则在前半部分查找；
+//　　　　2）如果中间数字的前一个数字等于其下标，则说明中间数字的下标即为我们所要找的数字。
+    public int getMissingNumber(int[] arr) {
+        if (arr == null || arr.length <= 0)
+            return -1;
+        int low = 0;
+        int high = arr.length - 1;
+        while (low <= high) {
+            int mid = (low + high) >> 1;
+            if (arr[mid] != mid) {
+                if (mid == 0 || arr[mid - 1] == mid - 1)
+                    return mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    /*
+     * 21. 调整数组顺序使奇数位于偶数前面
+     * 输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有奇数位于数组的前半部分，所有偶数位于数组的后半部分。
+     * */
+    public int[] exchange(int[] nums) {
+        int l = 0;
+        int r = nums.length - 1;
+        while (l < r) {
+            while (l < r & nums[l] % 2 != 0) {
+                l++;
+            }
+            while (l < r & nums[r] % 2 == 0) {
+                r--;
+            }
+            if (l < r) {
+                int temp = nums[l];
+                nums[l] = nums[r];
+                nums[r] = temp;
+            }
+        }
+        return nums;
+    }
+
+    /*
+    * 39. 数组中出现次数超过一半的数字
+    * 数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。
+    你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+    * - 思路：或者排序中间的数即为所求
+    * */
+    public int majorityElement(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 1; i++) {
+            int count = 1;
+            int value = nums[i];
+            while (i < nums.length - 1 && nums[i] == nums[i + 1]) {
+                count++;
+
+            }
+            if (count > nums.length / 2) {
+                return value;
+            }
+            continue;
+        }
+        return 0;
+    }
+
+    //- 思路一：数字次数超过一半，则说明：排序之后数组中间的数字一定就是所求的数字。
+    //
+    //利用partition()函数获得某一随机数字，其余数字按大小排在该数字的左右。若该数字下标刚好为n/2，则该数字即为所求数字；若小于n/2，则在右边部分继续查找；反之，左边部分查找。
+    public int majorityElement1(int[] array) {
+        if (array == null || array.length <= 0)
+            return 0;
+        int l = 0;
+        int r = array.length - 1;
+        int index = partition(array, l, r);
+        while (index != array.length >> 1) {
+            if (index < array.length >> 1) {
+                index = partition(array, index + 1, r);
+            } else {
+                index = partition(array, l, index - 1);
+            }
+        }
+        //判断次数是否超过一半
+        int num = array[index];
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == num) {
+                count++;
+            }
+        }
+        if (count > array.length >> 1) {
+            return num;
+        }
+        return 0;
+    }
+
+    private int partition(int[] array, int l, int r) {
+        int temp = array[l];
+        while (l < r) {
+            while (l < r && temp <= array[r]) {
+                r--;
+            }
+            if (l < r) {
+                array[l++] = array[r];
+            }
+            while (l < r && temp >= array[l]) {
+                l++;
+            }
+            if (l < r) {
+                array[r--] = array[l];
+            }
+        }
+        array[l] = temp;
+        return l;
+    }
+
+
+    //- 思路二：数字次数超过一半，则说明：该数字出现的次数比其他数字之和还多
+    //
+    //　　遍历数组过程中保存两个值：一个是数组中某一数字，另一个是次数。
+    // 遍历到下一个数字时，若与保存数字相同，则次数加1，反之减1。若次数=0，则保存下一个数字，次数重新设置为1。
+    // 由于要找的数字出现的次数比其他数字之和还多，那么要找的数字肯定是最后一次把次数设置为1的数字。
+
+    //采用阵地攻守的思想：
+    //　　第一个数字作为第一个士兵，守阵地；count = 1；
+    //　　遇到相同元素，count++;
+    //　　遇到不相同元素，即为敌人，同归于尽,count--；当遇到count为0的情况，又以新的i值作为守阵地的士兵，继续下去，到最后还留在阵地上的士兵，有可能是主元素。
+    //　　再加一次循环，记录这个士兵的个数看是否大于数组一般即可
+    public int majorityElement2(int[] array) {
+        if (array == null || array.length <= 0)
+            return 0;
+        int num = array[0];
+        int count = 1;
+        for (int i = 1; i < array.length; i++) {
+            if (count == 0) {
+                num = array[i];
+                count++;
+            } else if (array[i] == num)
+                count++;
+            else
+                count--;
+        }
+        if (count > 0) {
+            int times = 0;
+            for (int i = 0; i < array.length; i++) {
+                if (array[i] == num) {
+                    times++;
+                }
+            }
+            if (times * 2 > array.length) {
+                return num;
+            }
+        }
+        return 0;
+    }
+
+
+    /*
+     * 40. 最小的k个数
+     * 输入整数数组 arr ，找出其中最小的 k 个数。
+     * 例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
+     * */
+    //使用最小堆
+    public int[] getLeastNumbers(int[] arr, int k) {
+        //构建大顶堆,从最小非叶子节点开始
+        for (int i = arr.length / 2 - 1; i >= 0; i--) {
+            adjustHeap(arr, i, arr.length);
+        }
+        for (int i = arr.length - 1; i >= 0; i--) {
+            int temp = arr[i];
+            arr[i] = arr[0];
+            arr[0] = temp;
+            //调换头节点在进行调整
+            adjustHeap(arr, 0, i);
+        }
+        //挑选出最小的k个元素
+
+        int[] res = new int[k];
+        for (int i = 0; i < k; i++) {
+            res[i] = arr[i];
+        }
+        return res;
+    }
+
+    /**
+     * @param arr    数组
+     * @param i      为0时即为调整
+     * @param length 要调整数组元素数目
+     */
+    private void adjustHeap(int[] arr, int i, int length) {
+        int temp = arr[i];
+        for (int k = 2 * i + 1; k < length; k = k * 2 + 1) {//从i结点的左子结点开始，也就是2i+1处开始
+            if (k + 1 < length && arr[k + 1] > arr[k]) {
+                k++;
+            }
+            if (arr[k] > temp) {//如果子节点小于父节点，将子节点值赋给父节点（不用进行交换），i作为下次需要比较调整的坐标
+                arr[i] = arr[k];
+                i = k;
+            } else
+                break;
+        }
+        arr[i] = temp;//将temp值放到最终的位置。比较完后i即为最后所需要待的位置
+    }
+
+    /*
+     * 41. 数据流中的中位数
+     * 如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。
+     * 如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+     * */
+    //- 思路
+    //　　所谓数据流，就是不会一次性读入所有数据，只能一个一个读取，每一步都要求能计算中位数。
+    //
+    //　　将读入的数据分为两部分，一部分数字小，另一部分大。小的一部分采用大顶堆存放，大的一部分采用小顶堆存放。
+    // 当总个数为偶数时，使两个堆的数目相同，则中位数=大顶堆的最大数字与小顶堆的最小数字的平均值；
+    // 而总个数为奇数时，使小顶堆的个数比大顶堆多一，则中位数=小顶堆的最小数字。
+    //
+    //　　因此，插入的步骤如下：
+    //
+    //　　1.若已读取的个数为偶数（包括0）时，两个堆的数目已经相同，将新读取的数插入到小顶堆中，从而实现小顶堆的个数多一。
+    // 但是，如果新读取的数字比大顶堆中最大的数字还小，就不能直接插入到小顶堆中了 ，此时必须将新数字插入到大顶堆中，
+    // 而将大顶堆中的最大数字插入到小顶堆中，从而实现小顶堆的个数多一。
+    //
+    //　　2若已读取的个数为奇数时，小顶堆的个数多一，所以要将新读取数字插入到大顶堆中，此时方法与上面类似。
+
+    class MedianFinder {
+        private PriorityQueue<Integer> minHeap;
+        private PriorityQueue<Integer> maxHeap;
+
+        /**
+         * initialize your data structure here.
+         */
+        public MedianFinder() {
+            minHeap = new PriorityQueue<>();
+            maxHeap = new PriorityQueue<>(new Comparator<Integer>() {
+                @Override
+                public int compare(Integer o1, Integer o2) {
+                    return o2 - o1;//降序
+                }
+            });
+        }
+
+        public void addNum(int num) {
+            if (((minHeap.size() + maxHeap.size()) & 1) == 0) {//偶数时候，下一个数字加入小顶堆
+                if (!maxHeap.isEmpty() && num < maxHeap.peek()) {
+                    //如果元素小于大顶堆的最大元素，则先加入大顶堆，然后再把最大元素提取出来加入小顶堆
+                    maxHeap.add(num);
+                    num = maxHeap.poll();
+                }
+                //优先加入小顶堆
+                minHeap.add(num);
+            } else {//奇数时，下一个数字放入大顶堆
+                if (!minHeap.isEmpty() && num > minHeap.peek()) {
+                    minHeap.add(num);
+                    num = minHeap.poll();
+                }
+                maxHeap.add(num);
+            }
+        }
+
+        public double findMedian() {
+            double median;
+            if (((minHeap.size() + maxHeap.size() & 1) == 0)) {
+                median = (maxHeap.peek() + minHeap.peek()) / 2.0;
+            } else {
+                median = minHeap.peek();
+            }
+            return median;
+        }
+    }
+    //- 收获
+    //　　1.最大最小堆可以用PriorityQueue实现，PriorityQueue默认是一个小顶堆，通过传入自定义的Comparator函数可以实现大顶堆：
+    /*
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(new Comparator<Integer>(){ //大顶堆
+    @Override
+    public int compare(Integer i1,Integer i2){
+        return i2-i1; //降序排列
+    }
+});
+    * */
+    //- 注意：i1-i2 是升序
+    //PriorityQueue的常用方法有：poll(),offer(Object),size(),peek()等。
+    //
+    //　　2.平均值应该定义为double，且（a+b）/2.0 。
+    //
+    //　　3.往最大堆中插入数据时间复杂度是O(logn)，获取最大数的时间复杂度是O(1)。
+    //
+    //　　4.这道题关键在于分成两个平均分配的部分，奇偶时分别插入到最大最小堆中，利用最大最小堆性质的插入方法要掌握。
+
+
+    /*
+     * 45. 把数组排成最小的数
+     * 输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个
+     * */
+
+    public String minNumber(int[] nums) {
+        for (int i = 0; i < nums.length - 1; i++) {
+            for (int j = 0; j < nums.length - 1 - i; j++) {
+                if (bigger(nums[j], nums[j + 1])) {
+                    int temp = nums[j];
+                    nums[j] = nums[j + 1];
+                    nums[j + 1] = temp;
+                }
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+
+        for (int num : nums) {
+            builder.append(num + "");
+        }
+        return builder.toString();
+    }
+
+    //if（a>b) true
+    private boolean bigger(int num1, int num2) {
+        String temp1 = num1 + "" + num2;
+        String temp2 = num2 + "" + num1;
+        if (temp1.compareTo(temp2) > 0) {//大于0就是大于
+            return true;
+        } else
+            return false;
+
+    }
+
+    public String minNumber1(int[] nums) {
+        //使用内置函数排序
+        String[] strNums = new String[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            strNums[i] = String.valueOf(nums[i]);
+        }
+        //排序
+        Arrays.sort(strNums, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return (o1 + o2).compareTo(o2 + o1);//升序
+            }
+        });
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < strNums.length; i++) {
+            builder.append(strNums[i]);
+        }
+        return builder.toString();
+    }
+
+    /*
+     * 51. 数组中的逆序对
+     * 在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，求出这个数组中的逆序对的总数。
+     * */
+    public int reversePairs(int[] nums) {
+        int count = 0;
+        for (int i = 0; i < nums.length - 1; i++) {
+            int temp = nums[i];
+            for (int j = i + 1; j < nums.length; j++) {
+                if (temp > nums[j]) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    //借助归并算法，在排序的过程中完成统计
+    public int reversePairs1(int[] nums) {
+        int len = nums.length;
+        if (len < 2) {
+            return 0;
+        }
+        int[] temp = new int[len];
+        return sort(nums, 0, len - 1, temp);
+    }
+
+    private int sort(int[] nums, int l, int r, int[] temp) {
+        if (l == r) {
+            return 0;
+        }
+        int mid = (l + r) / 2;
+        int leftPairs = sort(nums, l, mid, temp);
+        int rightPairs = sort(nums, mid + 1, r, temp);
+        int reversePairs = leftPairs + rightPairs;
+        //判断左边最大值是否小于右边最小值
+        if (nums[mid] < nums[mid + 1]) {
+            return reversePairs;
+        }
+        int mergeNums = merge(nums, l, mid, r, temp);
+        return mergeNums + reversePairs;
+
+    }
+
+    private int merge(int[] nums, int l, int mid, int r, int[] temp) {
+        int i = l;
+        int j = mid + 1;
+        int t = 0;
+        int res = 0;
+        while (i <= mid && j <= r) {
+            if (nums[i] <= nums[j]) {
+                temp[t++] = nums[i++];
+            } else {//前值大于后值时需要统计
+                res += (mid - i + 1);
+                temp[t++] = nums[j++];
+            }
+        }
+        while (i <= mid) {
+            temp[t++] = nums[i++];
+        }
+        while (j <= r) {
+            temp[t++] = nums[j++];
+        }
+        t = 0;
+        while (l <= r) {
+            //将temp中的元素全部拷贝到原数组中
+            nums[l++] = temp[t++];
+        }
+        return res;
+    }
+
+    //***********************动态规划***********************************
+    //解题思路：
+    //本题有动态规划算法的几个明显特征：
+    //（1）是求最优解问题，如最大值，最小值；
+    //（2）该问题能够分解成若干个子问题，并且子问题之间有重叠的更小子问题。
+
+    //通常按照如下4个步骤来设计一个动态规划算法：
+    //　　1.求一个问题的最优解
+    //　　2.整体问题的最优解依赖各子问题的最优解
+    //　　3.小问题之间还有相互重叠的更小的子问题
+    //　　4.为了避免小问题的重复求解，采用从上往下分析和从下往上求解的方法求解问题
+
+    /*
+     * 14- I. 剪绳子
+     * 给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），
+     * 每段绳子的长度记为 k[0],k[1]...k[m] 。请问 k[0]*k[1]*...*k[m] 可能的最大乘积是多少？
+     * 例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+
+     * */
+
+    public int cuttingRope(int n) {
+        //列举特殊长度项
+        if (n == 2) {
+            return 1;
+        }
+        if (n == 3) {
+            return 2;
+        }
+        int[] dp = new int[n + 1];//数组多开一个方便
+        //例外，本身长度大于乘积
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 3;
+
+        for (int i = 4; i <= n; i++) {//在这里n也需要计算所以边界要大于n
+            int max = 0;
+            //算不同长度的最大值乘积，再比较最大值
+            for (int j = 1; j <= i / 2; j++) {
+                if (dp[j] * dp[i - j] > max) {
+                    max = dp[j] * dp[i - j];
+                }
+            }
+            dp[i] = max;
+        }
+        return dp[n];
+    }
+
+
+    /*
+     * 42. 连续子数组的最大和
+     * 输入一个整型数组，数组里有正数也有负数。数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。
+     * */
+    //动态规划，定义dp[i]表示以data[i]为末尾元素的子数组和的最大值
+    // 递归公式：dp[i] =  data[i]          i=0或dp[i-1]<=0
+    //          dp[i-1]+data[i]           i!=0且dp[i-1]>0
+    public int maxSubArray(int[] nums) {
+        if (nums.length == 0 || nums == null) {
+            return 0;
+        }
+        int[] dp = new int[nums.length + 1];
+        dp[0] = nums[0];
+        int max = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (dp[i - 1] <= 0) {
+                dp[i] = nums[i];
+            } else
+                dp[i] = dp[i - 1] + nums[i];
+            if (dp[i] > max) {
+                max = dp[i];
+            }
+        }
+        return max;
+    }
+
+    /*
+     * 46. 把数字翻译成字符串
+     * 给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……，25 翻译成 “z”。
+     * 一个数字可能有多个翻译。请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+
+     * */
+//- 思路：dp[r]表示r个数字可以有几种翻译方式
+    //这道题的状态转移方程为：
+    //          dp[i−1]             num[i]和num[i−1]不能合成一个字符
+    //dp[i] {
+    //          dp[i-1]+dp[i-2]     num[i]和num[i−1]能合成一个字符
+
+
+    public int translateNum(int num) {
+        if (num < 0) {
+            return 0;
+        }
+        String str = String.valueOf(num);
+        int len = str.length();
+        int[] dp = new int[len + 1];//一般状态数组多申请一位可以防止空串情况
+        dp[0] = 1;//默认空串也算一种
+        dp[1] = 1;
+        for (int i = 1; i < len; i++) {
+            if (str.charAt(i - 1) == '0' || str.substring(i - 1, i + 1).compareTo("25") > 0) {
+                dp[i + 1] = dp[i];
+            } else {
+                dp[i + 1] = dp[i] + dp[i - 1];
+            }
+        }
+        return dp[str.length()];
+    }
+
+    /*
+     * 47. 礼物的最大价值
+     * 在一个 m*n 的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值大于 0）。
+     * 你可以从棋盘的左上角开始拿格子里的礼物，并每次向右或者向下移动一格、直到到达棋盘的右下角。
+     * 给定一个棋盘及其上面的礼物的价值，请计算你最多能拿到多少价值的礼物？
+     * - 思路：先把第一行和第一列数组累加好，
+     * dp方程：dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+     * */
+    public int maxValue(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+
+        int dp[][] = new int[m][n];
+        dp[0][0] = grid[0][0];
+        for (int i = 1; i < n; i++) {
+            dp[0][i] = dp[0][i - 1] + grid[0][i];
+        }
+        for (int j = 1; j < m; j++) {
+            dp[j][0] = dp[j - 1][0] + grid[j][0];
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
+    /*
+    * 48. 最长不含重复字符的子字符串
+    * 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+    *
+    * */
+    public int lengthOfLongestSubstring(String s) {
+
+        int len = s.length();
+        int left = 0;
+        int max = 0;
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            if (map.containsKey(s.charAt(i))) {
+                left = Math.max(left, map.get(s.charAt(i)));
+            }
+            map.put(s.charAt(i), i+1);//所以这里最好value计算为值的后一个index
+            max = Math.max(max, i - left+1 );//比较的时候是i 和 left距离
+        }
+        return max;
+
+    }
 
     public static void main(String[] args) {
         StringBuffer s = new StringBuffer("d ");
@@ -1709,8 +2649,9 @@ public class testForCode {
         root.right.left = new TreeNode(3);
         Codec codec = new Codec();
         codec.deserialize(codec.serialize(root));
-        new testForCode().verifyPostorder(new int[]{2, 6, 5});
+        System.out.println(new testForCode().reversePairs1(new int[]{1, 3, 2, 3, 1}));
+        new testForCode().lengthOfLongestSubstring("abcabcbb");
         System.out.println(Arrays.toString(new testForCode().reversePrint2(ListNode1)));
-        System.out.println(new testForCode().maxSlidingWindow(a, 3));
+        System.out.println(new testForCode().cuttingRope(10));
     }
 }

@@ -1454,7 +1454,7 @@ public class TestCode {
                 dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
             }
         }
-        return dp[m][n];
+        return dp[m-1][n-1];
     }
 
     public static void main(String[] args) {
