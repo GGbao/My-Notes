@@ -40,7 +40,7 @@ public class TestCode {
      * 输出：7 -> 0 -> 8
      * 原因：342 + 465 = 807
      */
-    public class ListNode {
+        public class ListNode {
         int val;
         ListNode next;
 
@@ -1374,7 +1374,7 @@ public class TestCode {
             }
             for (int r = r2 - 1; r >= r1 + 1; r--) {
                 ans[r][c1] = cur++;
-            }
+        }
             r1++;
             r2--;
             c1++;
@@ -1457,6 +1457,33 @@ public class TestCode {
         return dp[m-1][n-1];
     }
 
+    public String replaceSpace(String s) {
+        StringBuilder str = new StringBuilder(s);
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        int len = str.length();
+        int originalIndex = len - 1;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == ' ') {
+                len += 2;
+            }
+        }
+        str.setLength(len);
+        int curIndex = len - 1;
+        for (; curIndex >= 0 && curIndex != originalIndex; ) {
+            if (str.charAt(originalIndex) == ' ') {
+                str.setCharAt(curIndex--, '0');
+                str.setCharAt(curIndex--, '2');
+                str.setCharAt(curIndex--, '%');
+            } else {
+                str.setCharAt(curIndex--, str.charAt(originalIndex));
+            }
+            originalIndex--;
+        }
+        return str.toString();
+    }
+
     public static void main(String[] args) {
         int[][] s = new int[][]{{1, 4}, {0, 4}};
 
@@ -1465,9 +1492,6 @@ public class TestCode {
     }
 
 }
-
-
-
 
 
 

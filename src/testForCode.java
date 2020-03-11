@@ -1,5 +1,6 @@
 import java.util.*;
 
+
 public class testForCode {
     /*字符串*/
     /*(4) 替换空格
@@ -2519,6 +2520,33 @@ public class testForCode {
         }
         return dp[n];
     }
+    /*
+    * 14- II. 剪绳子 II
+    * - 思路：会越界，使用贪心算法，考验数学方法
+    * 给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），
+    * 每段绳子的长度记为 k[0],k[1]...k[m] 。请问 k[0]*k[1]*...*k[m] 可能的最大乘积是多少？
+    * 例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+        答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1
+    * */
+    //算法流程：
+    //当 n ≤3 时，按照贪心规则应直接保留原数字，但由于题目要求必须剪成 m>1段，因此必须剪出一段长度为 1的绳子，即返回 n - 1 。
+    //当 n>3时，求 n除以 3的 整数部分 a 和 余数部分 b （即n=3a+b ），并分为以下三种情况（设求余操作符号为 "⊙" ）：
+    //当 b = 0 时，直接返回 3^a ⊙ 10000000073
+    //当 b = 1 时，要将一个 1 + 3 转换为 2+2 ，因此返回 (3^(a-1) * 4)⊙ 1000000007
+    //当 b = 2 时，返回 (3^a * 2) ⊙ 1000000007
+
+    public int cuttingRope1(int n) {
+
+        if (n <= 3) return n - 1;
+        long res = 1;
+        while (n > 4) {
+            res *= 3;
+            res = res % 1000000007;//防止溢出
+            n -= 3;
+        }
+        return (int) (res * n % 1000000007);
+
+    }
 
 
     /*
@@ -2608,10 +2636,10 @@ public class testForCode {
     }
 
     /*
-    * 48. 最长不含重复字符的子字符串
-    * 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
-    *
-    * */
+     * 48. 最长不含重复字符的子字符串
+     * 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+     *
+     * */
     public int lengthOfLongestSubstring(String s) {
 
         int len = s.length();
@@ -2622,11 +2650,816 @@ public class testForCode {
             if (map.containsKey(s.charAt(i))) {
                 left = Math.max(left, map.get(s.charAt(i)));
             }
-            map.put(s.charAt(i), i+1);//所以这里最好value计算为值的后一个index
-            max = Math.max(max, i - left+1 );//比较的时候是i 和 left距离
+            map.put(s.charAt(i), i + 1);//所以这里最好value计算为值的后一个index
+            max = Math.max(max, i - left + 1);//比较的时候是i 和 left距离
         }
         return max;
 
+    }
+    //*******************其他************************
+    /*
+     * 10- I. 斐波那契数列
+     * */
+    //写一个函数，输入 n ，求斐波那契（Fibonacci）数列的第 n 项。斐波那契数列的定义如下：
+    //
+    //F(0) = 0,   F(1) = 1
+    //F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
+
+    public int fib(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+            if (dp[i] > 1000000007) {
+                dp[i] = dp[i] % 1000000007;
+            }
+        }
+        return dp[n];
+
+    }
+
+    /*
+     * 10- II. 青蛙跳台阶问题
+     * 一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
+     * - 思路：dp[n]表示n级台阶的跳法
+     * dp[n]   dp[n-1]+dp[n-2]
+     * */
+    public int numWays(int n) {
+        if (n == 0) {
+            return 1;
+        }
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+            if (dp[i] > 1000000007) {
+                dp[i] = dp[i] % 1000000007;
+            }
+        }
+        return dp[n];
+    }
+
+    //******************回溯法************************
+    //- 思路：通常可以使用LinkedList来代替栈实现回溯，使用removeLast()方法
+    //result = []
+    //def backtrack(路径, 选择列表):
+    //    if 满足结束条件:
+    //        result.add(路径)
+    //        return
+    //
+    //for 选择 in 选择列表:
+    //    做选择
+    //    backtrack(路径, 选择列表)
+    //    撤销选择
+    /*
+     * 12. 矩阵中的路径
+     * 请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。
+     * 路径可以从矩阵中的任意一格开始，每一步可以在矩阵中向左、右、上、下移动一格。如果一条路径经过了矩阵的某一格，
+     * 那么该路径不能再次进入该格子。例如，在下面的3×4的矩阵中包含一条字符串“bfce”的路径（路径中的字母用加粗标出）。
+
+
+     * */
+    public boolean exist(char[][] board, String word) {
+        int rows = board.length;
+        int cols = board[0].length;
+        if (rows == 0 || cols == 0 || word == null || board == null) {
+            return false;
+        }
+        boolean[][] isVisited = new boolean[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (hasPath(board, i, j, word, isVisited, 0)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param board 矩阵
+     * @param row   当前行数
+     * @param col   当前列数
+     * @param word  条件字符
+     * @param isVisited 访问列表
+     * @param i     当前路径长度
+     * @return
+     */
+    private boolean hasPath(char[][] board, int row, int col, String word, boolean[][] isVisited, int i) {
+        //约束条件，满足就跳出
+        if (i == word.length()) {//遍历的个数和数据相同就可以跳出
+            return true;
+        }
+        if (row < 0 || col < 0 || row >= board.length || col >= board[0].length) {
+            return false;
+        }
+        //递归
+        //如果未被访问，且匹配字符串，标记当前位置为已访问，分上下左右四个位置递归求解
+        if (!isVisited[row][col] && board[row][col] == word.charAt(i)) {
+            isVisited[row][col] = true;
+            boolean hashPath =
+                    hasPath(board, row, col + 1, word, isVisited, i + 1) ||/*左*/
+                            hasPath(board, row, col - 1, word, isVisited, i + 1) ||/*右*/
+                            hasPath(board, row - 1, col, word, isVisited, i + 1) ||/*上*/
+                            hasPath(board, row + 1, col, word, isVisited, i + 1);/*下*/
+            if (hashPath) {
+                return true;
+            } else {
+                //路径失败，回溯
+                isVisited[row][col] = false;
+                return false;
+            }
+        } else
+            //如果已经被访问或者值不相同则直接返回
+            return false;
+    }
+
+    /*
+     * 13. 机器人的运动范围
+     * 地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。
+     * 一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），
+     * 也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。
+     * 但它不能进入方格 [35, 38]，因为3+5+3+8=19。请问该机器人能够到达多少个格子？
+     * */
+    public int movingCount(int m, int n, int k) {
+        if (m == 0 || n == 0 || k == 0) {
+            return 0;
+        }
+        boolean[][] isVisited = new boolean[m][n];
+        return moveCount(m, n, 0, 0, k, isVisited);
+
+    }
+
+    private int moveCount(int m, int n, int row, int col, int k, boolean[][] isVisited) {
+        int count = 0;
+        if (canGet(k, m, n, row, col, isVisited)) {
+            isVisited[row][col] = true;
+            count = 1 + moveCount(m, n, row + 1, col, k, isVisited) +
+                    moveCount(m, n, row - 1, col, k, isVisited) +
+                    moveCount(m, n, row, col + 1, k, isVisited) +
+                    moveCount(m, n, row, col - 1, k, isVisited);
+        }
+        return count;
+    }
+
+    //判断是否格子是否可以进入
+    private boolean canGet(int k, int m, int n, int row, int col, boolean[][] isVisited) {
+        return row >= 0 && col >= 0 && row < m && col < n && !isVisited[row][col]
+                && (getDigitSum(row) + getDigitSum(col)) <= k;
+    }
+
+    private int getDigitSum(int num) {
+        int sum = 0;
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        return sum;
+    }
+
+    /*
+     * 16. 数值的整数次方
+     * 实现函数double Power(double base, int exponent)，求base的exponent次方。不得使用库函数，同时不需要考虑大数问题。
+     * */
+    //- 思路：1）0的负数次方不存在；2）0的0次方没有数学意义；3）要考虑exponent为负数的情况。
+    // 所以可以对exponent进行分类讨论，在对base是否为0进行讨论。
+//- 注意：n 可以取到 -2147483648（整型负数的最小值），因此，在编码的时候，需要将 n 转换成 long 类型。
+    public double myPow(double x, int n) {
+        double result = 1;
+        long N = n;//转换成long类型防止取反数越界
+        if (N < 0) {
+            x = 1 / x;
+            N *= -1;
+        }
+        while (N > 0) {
+            if ((N & 1) == 1) {
+                result *= x;
+            }
+            x *= x;//底数翻倍
+            N >>>= 1;//数右移一位
+        }
+        return result;
+    }
+
+    /*
+     *17. 打印从1到最大的n位数
+     * 输入数字 n，按顺序打印出从 1 到最大的 n 位十进制数。比如输入 3，则打印出 1、2、3 一直到最大的 3 位数 999。
+     * - 注意：大数问题
+     * */
+    // TODO: 2020/3/8 大数问题
+    public int[] printNumbers(int n) {
+        int count = 9;
+        for (int i = 0; i < n; i++) {
+            count = count * 10 + 9;
+        }
+        int[] ints = new int[count];
+        for (int i = 0; i < count; i++) {
+            ints[i] = i + 1;
+        }
+        return ints;
+
+    }
+
+    /*
+     * 20. 表示数值的字符串
+     * 请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。
+     * 例如，字符串"+100"、"5e2"、"-123"、"3.1416"、"0123"及"-1E-16"都表示数值，
+     * 但"12e"、"1a3.14"、"1.2.3"、"+-5"及"12e+5.4"都不是。
+
+     * */
+    // TODO: 2020/3/9
+    public boolean isNumber(String s) {
+        return false;
+    }
+
+    /*
+     * 29. 顺时针打印矩阵
+     * 输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+
+     * */
+    //-思路一：使用游标移动
+    public int[] spiralOrder(int[][] matrix) {
+        if (matrix.length == 0) {
+            return new int[0];
+        }
+        int R = matrix.length;
+        int C = matrix[0].length;
+        int[] res = new int[R * C];
+        boolean[][] isVisited = new boolean[R][C];
+        int[] dr = {0, 1, 0, -1};//游标移动参数
+        int[] dc = {1, 0, -1, 0};
+        int r = 0, c = 0, di = 0;
+        for (int i = 0; i < R * C; i++) {
+            res[i] = matrix[r][c];
+            isVisited[r][c] = true;
+            int cr = r + dr[di];
+            int cc = c + dc[di];
+            if (cr >= 0 && cc >= 0 && cr < R && cc < C && !isVisited[cr][cc]) {
+                r = cr;
+                c = cc;
+            } else {
+                di = (di + 1) % 4;
+                r += dr[di];
+                c += dc[di];
+            }
+        }
+        return res;
+    }
+
+    //- 思路二：设定边界法
+    public int[] spiralOrder1(int[][] matrix) {
+        if (matrix.length == 0) {
+            return new int[0];
+        }
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        List<Integer> res = new ArrayList<>();
+        int r1 = 0, r2 = rows - 1;
+        int c1 = 0, c2 = cols - 1;
+        while (r1 <= r2 && c1 <= c2) {
+            for (int c = c1; c <= c2; c++) {
+                res.add(matrix[r1][c]);
+            }
+            for (int r = r1 + 1; r <= r2; r++) {
+                res.add(matrix[r][c2]);
+            }
+            if (r1 < r2 && c1 < c2) {//注意当不是正规的矩阵时，在判断循环时要注意只有单行的情况，避免重复
+                for (int c = c2 - 1; c >= c1; c--) {
+                    res.add(matrix[r2][c]);
+                }
+                for (int r = r2 - 1; r >= r1 + 1; r--) {
+                    res.add(matrix[r][c1]);
+                }
+            }
+            r1++;
+            r2--;
+            c1++;
+            c2--;
+        }
+        int size = res.size();
+        int[] resArray = new int[size];
+        for (int i = 0; i < size; i++) {
+            resArray[i] = res.get(i);
+        }
+        return resArray;
+    }
+
+    /*
+     *  * 回溯法
+     *
+     * 字符串的排列和数字的排列都属于回溯的经典问题
+     *
+     * 回溯算法框架：解决一个问题，实际上就是一个决策树的遍历过程：
+     * 1. 路径：做出的选择
+     * 2. 选择列表：当前可以做的选择
+     * 3. 结束条件：到达决策树底层，无法再做选择的条件
+     *
+     * 伪代码：
+     * result = []
+     * def backtrack(路径，选择列表):
+     *     if 满足结束条件：
+     *         result.add(路径)
+     *         return
+     *     for 选择 in 选择列表:
+     *         做选择
+     *         backtrack(路径，选择列表)
+     *         撤销选择
+     *
+     * 核心是for循环中的递归，在递归调用之前“做选择”，
+     * 在递归调用之后“撤销选择”。
+
+     * */
+    /*
+     * 38. 字符串的排列
+     * 输入一个字符串，打印出该字符串中字符的所有排列。
+     * */
+    /*
+     * 交换法 —— 回溯算法
+     *
+     * [a, [b, c]]
+     * [b, [a, c]] [c, [b, a]]
+     *
+     * 如上，对字符串"abc"分割，每次固定一个字符为一部分，
+     * 其他字符为另一部分，再将固定字符与其他字符进行交换，
+     * 依次遍历每个字符，再进行回溯递归。
+     * */
+    //对于a,b,c（下标为0,1,2）
+    //0与0交换,得a,b,c => 1与1交换,得a,b,c =>2与2交换,得a,b,c(存入)
+    //                => 1与2交换，得a,c,b =>2与2交换,得a,c.b(存入)
+    //0与1交换,得b,a,c => 1与1交换,得b,a,c =>2与2交换,得b,a,c(存入)
+    //                => 1与2交换，得b,c,a =>2与2交换,得b,c,a(存入)
+    //0与2交换,得c,b,a => 1与1交换,得c,b,a =>2与2交换,得c,b,a(存入)
+    //                => 1与2交换，得c,a,b =>2与2交换,得c,a.b(存入)
+
+    public String[] permutation(String s) {
+        //去重
+        HashSet<String> res = new HashSet<String>();
+        if (s.isEmpty()) {
+            return new String[0];
+        }
+        //字符数组排序
+        char[] chars = s.toCharArray();
+        Arrays.sort(chars);
+        permutationCore(res, chars, 0);
+        String[] strs = new String[res.size()];
+        int i = 0;
+        for (String x : res) {
+            strs[i++] = x;
+        }
+        return strs;
+    }
+
+    private void permutationCore(HashSet<String> res, char[] chars, int index) {
+        if (index == chars.length) {
+            res.add(String.valueOf(chars));
+        }
+        for (int i = index; i < chars.length; i++) {
+            //先固定某一个元素
+            swap(chars, index, i);
+            //再去递归后面的元素
+            permutationCore(res, chars, index + 1);
+            //回溯，需把之前换过的元素换回原来的位置
+            swap(chars, index, i);
+        }
+    }
+
+    private void swap(char[] chars, int i, int j) {
+        char tmp = chars[i];
+        chars[i] = chars[j];
+        chars[j] = tmp;
+    }
+
+    public String[] permutation1(String s) {
+        //去重
+        HashSet<String> res = new HashSet<>();
+        if (s.isEmpty()) {
+            return new String[0];
+        }
+        char[] chars = s.toCharArray();
+        boolean[] isVisited = new boolean[s.length()];
+        Arrays.sort(chars);
+        backtrack(res, chars, isVisited, new StringBuilder());
+        String[] strs = new String[res.size()];
+        int i = 0;
+        for (String x : res) {
+            strs[i++] = x;
+        }
+        return strs;
+    }
+
+    private void backtrack(HashSet<String> res, char[] chars, boolean[] isVisited, StringBuilder builder) {
+        if (builder.length() == chars.length) {
+            res.add(builder.toString());
+            return;
+        }
+        for (int i = 0; i < chars.length; i++) {
+            if (isVisited[i]) {
+                continue;
+            }
+            isVisited[i] = true;
+            builder.append(chars[i]);
+            backtrack(res, chars, isVisited, builder);
+            //移除最后一个元素完成回溯
+            builder.deleteCharAt(builder.length() - 1);
+            isVisited[i] = false;
+        }
+    }
+
+
+    //收获
+    //　　1.要对字符串进行修改，可以将字符串转化为字符数组进行修改，也可以考虑使用StringBuilder类。
+    //
+    //　　2.list.contains()方法可以直接判断是否有重复字符串；Collections.sort(list)可以将list中的字符串进行排序。
+    //
+    //　　3.字符串和字符数组间的转化：str.toCharArray()     String.valueOf(strArray)
+    //
+    //　　4.数组在递归过程中进行了交换后，最终要记得交换回来（代码最后几行）相当于回溯
+
+    /*
+    * 43. 1～n整数中1出现的次数
+    * 输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+
+例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
+
+    * */
+    //-思路：递归法
+    public int countDigitOne(int n) {
+        return dfs(n);
+
+    }
+
+    private int dfs(int n) {
+        if (n <= 0) {
+            return 0;
+        }
+
+        String numStr = String.valueOf(n);
+        int high = numStr.charAt(0) - '0';//1
+        int pow = (int) Math.pow(10, numStr.length() - 1);//1000
+        int last = n - high * pow;//234
+
+        if (high == 1) {
+            // 最高位是1，如1234, 此时pow = 1000,那么结果由以下三部分构成：
+            // (1) dfs(pow - 1)代表[0,999]中1的个数;
+            // (2) dfs(last)代表234中1出现的个数;
+            // (3) last+1代表固定高位1有多少种情况。（000-234）
+            return dfs(pow - 1) + dfs(last) + last + 1;
+        } else {
+            // 最高位不为1，如2234，那么结果也分成以下三部分构成：
+            // (1) pow代表固定高位1，有多少种情况;（1000-1999）
+            // (2) high * dfs(pow - 1)代表999以内和1999以内低三位1出现的个数;（high）个[0,999]
+            // (3) dfs(last)同上。（高位不变）
+            return pow + high * dfs(pow - 1) + dfs(last);
+        }
+    }
+
+    /*
+    * -思路二：找规律
+    * 对于整数n，我们将这个整数分为三部分：当前位数字cur，更高位数字high，更低位数字low，如：对于n=21034，当位数是十位时，cur=3，high=210，low=4。
+
+　　我们从个位到最高位 依次计算每个位置出现1的次数：
+
+　　1）当前位的数字等于0时，例如n=21034，在百位上的数字cur=0，百位上是1的情况有：00100~00199，01100~01199，……，20100~20199。一共有21*100种情况，即high*100;
+
+　　2）当前位的数字等于1时，例如n=21034，在千位上的数字cur=1，千位上是1的情况有：01000~01999，11000~11999，21000~21034。一共有2*1000+（34+1）种情况，即high*1000+(low+1)。
+
+　　3）当前位的数字大于1时，例如n=21034，在十位上的数字cur=3，十位上是1的情况有：00010~00019，……，21010~21019。一共有（210+1）*10种情况，即(high+1)*10。
+    * */
+
+    public int countDigitOne1(int n) {
+        //求每个位的数字所用
+        int index = 1;
+        int count = 0;
+        int high = n, cur = 0, low = 0;
+        while (high > 0) {  //i代表位数
+            high /= 10; //更高位数字
+            cur = (n / index) % 10;  //当前位数字
+            low = n % index;  //更低位数字
+            if (cur == 0) {
+                count += high * index;
+            }
+            if (cur == 1) {
+                count += high * index + (low + 1);
+            }
+            if (cur > 1) {
+                count += (high + 1) * index;
+            }
+            index *= 10;
+        }
+        return count;
+    }
+
+    /*
+     * 44. 数字序列中某一位的数字
+     * 数字以0123456789101112131415…的格式序列化到一个字符序列中。在这个序列中，第5位（从下标0开始计数）是5，第13位是1，第19位是4，等等。
+     * */
+    public int findNthDigit(int n) {
+        return 0;
+
+    }
+
+    /*
+     * 57. 和为s的两个数字
+     * 输入一个递增排序的数组和一个数字s，在数组中查找两个数，使得它们的和正好是s。如果有多对数字的和等于s，则输出任意一对即可。
+     * */
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> dic = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (!dic.containsKey(nums[i])) {
+                dic.put(target - nums[i], nums[i]);
+            } else {
+
+                return new int[]{dic.get(nums[i]), nums[i]};
+            }
+        }
+        return new int[2];
+    }
+
+    //- 思路：双指针
+    public int[] twoSum1(int[] nums, int target) {
+        int[] result = new int[2];
+        if (nums == null || nums.length < 2) {
+            return result;
+        }
+        int curSum = nums[0] + nums[nums.length - 1];
+        int left = 0;
+        int right = nums.length - 1;
+        while (curSum != target && left < right) {
+            if (curSum < target) {
+                left++;
+            } else
+                right--;
+            curSum = nums[left] + nums[right];
+        }
+        if (curSum == target) {
+            result[0] = nums[left];
+            result[1] = nums[right];
+        }
+        return result;
+    }
+
+    /*
+     * 57 - II. 和为s的连续正数序列
+     * 输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。
+     * */
+    //- 思路：首项加末项*项数/2
+
+    public int[][] findContinuousSequence(int target) {
+        LinkedList<int[]> res = new LinkedList<>();
+        for (int i = 1; i < target / 2; i++) {
+            List<Integer> temp = new ArrayList<>();
+            int sum = 0;
+            int start = i;
+            while (true) {
+                sum += start;
+                temp.add(start++);
+                if (sum >= target) {
+                    break;
+                }
+            }
+            if (sum == target) {
+                //list->int[]
+                int size = temp.size();
+                int[] resArray = new int[size];
+                for (int j = 0; j < size; j++) {
+                    resArray[j] = temp.get(j);
+                }
+                res.add(resArray);
+            }
+        }
+        return res.toArray(new int[0][]);
+    }
+
+    //-思路：依旧使用两个指针small，big，值分别为1，2。如果从small加到big的和等于s，即找到了一组解，然后让big后移，继续求解。
+    // 如果和小于s，big后移，如果和大于s，small前移。直到small大于s/2停止。
+    public int[][] findContinuousSequence1(int target) {
+        LinkedList<int[]> res = new LinkedList<>();
+        int small = 1, big = 2, middle = target >> 1;
+        int curSum = small + big;
+        while (small <= middle) {
+            if (curSum == target) {
+                int[] temp = new int[big - small + 1];
+                int k = 0;
+                for (int i = small; i <= big; i++) {
+                    temp[k++] = small;
+                }
+                res.add(temp);
+                big++;
+                curSum += big;
+            } else if (curSum < target) {
+                big++;
+                curSum += big;
+            } else {
+                curSum -= small;
+                small++;
+            }
+        }
+        return res.toArray(new int[0][]);
+    }
+
+
+    /*
+     *60. n个骰子的点数
+     * 把n个骰子扔在地上，所有骰子朝上一面的点数之和为s。输入n，打印出s的所有可能的值出现的概率。
+     * */
+    //- 思路：状态转移
+    /*
+    * n个骰子点数和为s的种类数只与n-1个骰子的和有关。因为一个骰子有六个点数，那么第n个骰子可能出现1到6的点数。
+    * 所以第n个骰子点数为1的话，f(n,s)=f(n-1,s-1)，当第n个骰子点数为2的话，f(n,s)=f(n-1,s-2)，…，依次类推。
+    * 在n-1个骰子的基础上，再增加一个骰子出现点数和为s的结果只有这6种情况！
+    * 那么有：f(n,s)=f(n-1,s-1)+f(n-1,s-2)+f(n-1,s-3)+f(n-1,s-4)+f(n-1,s-5)+f(n-1,s-6)
+上面就是状态转移方程，已知初始阶段的解为：当n=1时, f(1,1)=f(1,2)=f(1,3)=f(1,4)=f(1,5)=f(1,6)=1。
+
+    * */
+    public double[] twoSum(int n) {
+        int[][] dp = new int[n + 1][6 * n + 1];
+        double[] res = new double[5 * n + 1];//6n-n+1
+        double all = Math.pow(6, n);
+        //特殊情况赋值
+        for (int i = 1; i <= 6; i++) {
+            dp[1][i] = 1;
+        }
+        //n个骰子
+        for (int i = 1; i <= n; i++) {
+            //i个骰子值范围
+            for (int j = i; j <= 6 * n; j++) {
+                //骰子取值范围为1-6
+                for (int k = 1; k <= 6; k++) {
+                    dp[i][j] += j > k ? dp[i - 1][j - k] : 0;//只有当j的取值大于k时才满足条件可以加入
+                }
+            }
+        }
+        for (int i = n; i <= 6 * n; i++) {
+            res[i - n] = dp[n][i] / all;
+        }
+        return res;
+    }
+
+    /*
+     * 61. 扑克牌中的顺子
+     * 从扑克牌中随机抽5张牌，判断是不是一个顺子，即这5张牌是不是连续的。
+     * 2～10为数字本身，A为1，J为11，Q为12，K为13，而大、小王为 0 ，可以看成任意数字。A 不能视为 14。
+     * */
+    //- 思路：　　1）进行对5张牌进行排序；
+    //　　2）找出0的个数；
+    //　　3）算出相邻数字的空缺总数；
+    //　　4）如果0的个数大于等于空缺总数，说明连续，反之不连续；
+    //　　5）记得判断相邻数字是否相等，如果有出现相等，说明不是顺子。
+
+    public boolean isStraight(int[] nums) {
+        Arrays.sort(nums);
+        int numZero = 0;
+        int numGap = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                numZero++;
+            }
+        }
+        int small = numZero;
+        int big = numZero + 1;
+        while (big < nums.length) {
+            if (nums[small] == nums[big]) {
+                return false;
+            }
+            numGap += nums[big++] - nums[small++] - 1;//计算间隔累计，同时两个指针后移
+        }
+        if (numZero >= numGap) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    * 62. 圆圈中最后剩下的数字
+    * 0,1,,n-1这n个数字排成一个圆圈，从数字0开始，每次从这个圆圈里删除第m个数字。求出这个圆圈里剩下的最后一个数字。
+    例如，0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。
+    * */
+    //- 思路：1.采用链表来存放数据，每次对长度取余来实现循环，LinkedList比ArrayList更适合增删操作
+    // 2.对于下标循环一圈类似的问题，通过%可以很好地实现循环，而不需要我们自己构造循环链表；
+    public int lastRemaining(int n, int m) {
+        if (n < 1 || m < 1)
+            return -1; //出错
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            list.add(i);
+        }
+        int removeIndex = 0;
+        while (list.size() > 1) {
+            removeIndex = (removeIndex + m - 1) % list.size();//实现动态的取余来完成循环链表遍历
+            list.remove(removeIndex);
+
+        }
+        return list.getFirst();
+    }
+
+    /*
+     * 63. 股票的最大利润
+     * 假设把某股票的价格按照时间先后顺序存储在数组中，请问买卖该股票一次可能获得的最大利润是多少？
+     * */
+    //- 思路：遍历每一个数字，并保存之前最小的数字，两者差最大即为最大利润。
+    public int maxProfit(int[] prices) {
+        if (prices.length == 0 || prices == null) {
+            return 0;
+        }
+        int min = prices[0];//买入价格最小值
+        int max = 0;//最大利润
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] < min) {//保存“之前”最小数字
+                min = prices[i];
+            } else if (prices[i] - min > max) {//计算差值再比较大小
+                max = prices[i] - min;
+            }
+        }
+        return max;
+    }
+
+    /*
+     * 64. 求1+2+…+n
+     * 求 1+2+...+n ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
+     * */
+    //- 思路：对于A && B，如果A为假，那么就不执行B了；而如果A为真，就会执行B。
+    //　　　对于A || B，如果A为真，那么就会不执行B了；而如果A为假，就会执行B。
+    //　　使用递归来代替循环，用逻辑运算符&&或者||来代替判断语句。
+    //　　代码实现功能为：当n大于1时，和为f(n)=f(n-1)+n，n=1时，f(n)=1
+
+    public int sumNums(int n) {
+        int sum = n;
+        boolean flag = (n > 1) && ((sum += sumNums(n - 1)) > 0);//判断语句要写完整,要完整写出(sum+=getSum(n-1))>0,要赋值给flag才算完整的语句
+        //上面这句话相当于：
+        //if(n>1)
+        //   sum+=getSum(n-1);
+
+        //也可以使用||来实现
+        //boolean flag = (n==1) || ((sum+=getSum(n-1))>0);
+        return sum;
+    }
+
+    /*
+     * 66. 构建乘积数组
+     * 给定一个数组 A[0,1,…,n-1]，请构建一个数组 B[0,1,…,n-1]，其中 B 中的元素 B[i]=A[0]×A[1]×…×A[i-1]×A[i+1]×…×A[n-1]。不能使用除法。
+
+     * */
+    public int[] constructArr(int[] a) {
+        if (a == null || a.length == 0) {
+            return new int[0];
+        }
+        int[] b = new int[a.length];
+        b[0] = 1;
+        for (int i = 1; i < a.length; i++) {
+            b[i] = b[i - 1] * a[i - 1];//左半部分C[i]=C[i-1]*A[i-1]）
+        }
+        int[] c = new int[a.length];
+        c[a.length-1] = 1;
+        for (int i = a.length - 2; i >= 0; i--) {
+            c[i] = c[i + 1] * a[i + 1];//右半部分D[i]=D[i+1]*A[i+1]）
+        }
+        for (int i = 0; i < a.length; i++) {
+            a[i] = b[i] * c[i];
+        }
+        return a;
+
+    }
+
+    /*
+    68 - II. 二叉树的最近公共祖先
+    * */
+    /*
+    * 二叉树公共节点的三种情况：
+
+    p 和 q 都在左子树 ( right == null 或 left != null)
+    p 和 q 都在右子树 ( left == null 或 right !=null)
+    p 和 q 一个在左子树 一个在右子树 那么当前节点为最近公共祖先
+    情况1：如果右子树找不到 p 或 q 即(right==null)，那么说明 p 和 q 都在左子树上，返回 left
+
+    情况2：如果左子树找不到 p 或 q 即(left==null)，那么说明 p 和 q 都在右子树上，返回 right
+
+    情况3：如果上述情况都不符合，说明 p 和 q 分别在左子树和右子树，那么当前节点即为最近公共祖先，直接返回 root 即可。
+
+    * */
+    public TreeNode lowestCommonAncestor1(TreeNode root, TreeNode p, TreeNode q) {
+        //返回节点存在情况
+        if (root == null || root == p || root == q) {
+            return root;
+        }
+        TreeNode left = lowestCommonAncestor1(root.left, p, q);
+        TreeNode right = lowestCommonAncestor1(root.right, p, q);
+        //情况1：如果右子树找不到 p 或 q 即(right==null)，
+        //那么说明 p 和 q 都在左子树上，返回 left
+
+        //情况2：如果左子树找不到 p 或 q 即(right==null)，
+        //那么说明 p 和 q 都在右子树上，返回 right
+
+        //如果上述情况都不符合，说明 p 和 q 分别在左子树和右子树，
+        //那么最近公共节点为当前节点
+        //直接返回 root 即可
+        return (right == null) ? left : (left == null) ? right : root;
     }
 
     public static void main(String[] args) {
@@ -2649,9 +3482,11 @@ public class testForCode {
         root.right.left = new TreeNode(3);
         Codec codec = new Codec();
         codec.deserialize(codec.serialize(root));
-        System.out.println(new testForCode().reversePairs1(new int[]{1, 3, 2, 3, 1}));
-        new testForCode().lengthOfLongestSubstring("abcabcbb");
+        System.out.println(new testForCode().countDigitOne1(12));
+        new testForCode().isStraight(new int[]{1, 2, 3, 4, 5});
         System.out.println(Arrays.toString(new testForCode().reversePrint2(ListNode1)));
         System.out.println(new testForCode().cuttingRope(10));
     }
 }
+
+
