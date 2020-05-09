@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class testForCode {
@@ -335,8 +337,9 @@ public class testForCode {
         while (cur.next != null) {
             if (cur.next.val == val) {
                 cur.next = cur.next.next;
-            } else
+            } else {
                 cur = cur.next;
+            }
         }
         return pre.next;
     }
@@ -1450,7 +1453,9 @@ public class testForCode {
     TreeNode pre = null; //全局变量pre
 
     public TreeNode treeToDoublyList(TreeNode root) {
-        if (root == null) return root;
+        if (root == null) {
+            return root;
+        }
         TreeNode p = root;
         TreeNode q = root;
         while (p.left != null) {
@@ -1908,8 +1913,9 @@ public class testForCode {
      * -思路：从右上角开始搜寻
      * */
     public boolean findNumberIn2DArray(int[][] matrix, int target) {
-        if (matrix == null || matrix.length == 0 || matrix[0].length == 0)
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
             return false;
+        }
         int r = 0;
         int c = matrix[0].length - 1;//右上角坐标
         while (r < matrix.length && c >= 0) {
@@ -1936,8 +1942,9 @@ public class testForCode {
         while (i < numbers.length - 1) {
             if (numbers[i] <= numbers[i + 1]) {
                 i++;
-            } else
+            } else {
                 break;
+            }
         }
         if (i == numbers.length - 1) {
             return numbers[0];
@@ -2063,15 +2070,17 @@ public class testForCode {
 //　　　　1）如果中间数字的前一个数字也不等于其下标，则在前半部分查找；
 //　　　　2）如果中间数字的前一个数字等于其下标，则说明中间数字的下标即为我们所要找的数字。
     public int getMissingNumber(int[] arr) {
-        if (arr == null || arr.length <= 0)
+        if (arr == null || arr.length <= 0) {
             return -1;
+        }
         int low = 0;
         int high = arr.length - 1;
         while (low <= high) {
             int mid = (low + high) >> 1;
             if (arr[mid] != mid) {
-                if (mid == 0 || arr[mid - 1] == mid - 1)
+                if (mid == 0 || arr[mid - 1] == mid - 1) {
                     return mid;
+                }
                 high = mid - 1;
             } else {
                 low = mid + 1;
@@ -2130,8 +2139,9 @@ public class testForCode {
     //
     //利用partition()函数获得某一随机数字，其余数字按大小排在该数字的左右。若该数字下标刚好为n/2，则该数字即为所求数字；若小于n/2，则在右边部分继续查找；反之，左边部分查找。
     public int majorityElement1(int[] array) {
-        if (array == null || array.length <= 0)
+        if (array == null || array.length <= 0) {
             return 0;
+        }
         int l = 0;
         int r = array.length - 1;
         int index = partition(array, l, r);
@@ -2189,18 +2199,20 @@ public class testForCode {
     //　　遇到不相同元素，即为敌人，同归于尽,count--；当遇到count为0的情况，又以新的i值作为守阵地的士兵，继续下去，到最后还留在阵地上的士兵，有可能是主元素。
     //　　再加一次循环，记录这个士兵的个数看是否大于数组一般即可
     public int majorityElement2(int[] array) {
-        if (array == null || array.length <= 0)
+        if (array == null || array.length <= 0) {
             return 0;
+        }
         int num = array[0];
         int count = 1;
         for (int i = 1; i < array.length; i++) {
             if (count == 0) {
                 num = array[i];
                 count++;
-            } else if (array[i] == num)
+            } else if (array[i] == num) {
                 count++;
-            else
+            } else {
                 count--;
+            }
         }
         if (count > 0) {
             int times = 0;
@@ -2258,8 +2270,9 @@ public class testForCode {
             if (arr[k] > temp) {//如果子节点小于父节点，将子节点值赋给父节点（不用进行交换），i作为下次需要比较调整的坐标
                 arr[i] = arr[k];
                 i = k;
-            } else
+            } else {
                 break;
+            }
         }
         arr[i] = temp;//将temp值放到最终的位置。比较完后i即为最后所需要待的位置
     }
@@ -2378,8 +2391,9 @@ public class testForCode {
         String temp2 = num2 + "" + num1;
         if (temp1.compareTo(temp2) > 0) {//大于0就是大于
             return true;
-        } else
+        } else {
             return false;
+        }
 
     }
 
@@ -2474,6 +2488,64 @@ public class testForCode {
         return res;
     }
 
+    /*
+    数组中的第K个最大元素
+在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+    * */
+    //借助小顶堆
+    public int findKthLargest(int[] nums, int k) {
+
+        //k个元素构建小顶堆
+        for (int i = k/2-1; i >=0 ; i--) {
+            adjustMinHeap(nums,i , k);
+        }
+        //剩下元素，比堆顶小，跳过，比堆顶大就加入调整
+        for (int i = k; i < nums.length; i++) {
+            if (nums[i] < nums[0]) {
+                continue;
+            } else {
+                swap(nums, i, 0);
+                adjustMinHeap(nums, 0, k);
+            }
+        }
+        return nums[0];
+    }
+
+    private void adjustMinHeap(int[] nums, int i, int length) {
+        int temp = nums[i];
+        for (int k = 2 * i + 1; k < length; k = k * 2 + 1) {
+            if (k + 1 < length && nums[k + 1] < nums[k]) {
+                k++;
+            }
+            if (nums[k] < temp) {
+                nums[i] = nums[k];
+                i = k;
+            }else {
+                break;
+            }
+        }
+        nums[i] = temp;
+    }
+
+    //借助快排查找
+    public int findKthLargest1(int[] nums, int k) {
+        int len = nums.length;
+        int left = 0;
+        int right = len - 1;
+        //转换一下，第 k 大元素的索引是 len - k
+        int target = len - k;
+        while (true) {
+            int index = partition(nums, left, right);
+            if (index == target) {
+                return nums[index];
+            } else if (index > target) {
+                right = index - 1;
+            } else {
+                left = index + 1;
+            }
+        }
+    }
+
     //***********************动态规划***********************************
     //解题思路：
     //本题有动态规划算法的几个明显特征：
@@ -2537,7 +2609,9 @@ public class testForCode {
 
     public int cuttingRope1(int n) {
 
-        if (n <= 3) return n - 1;
+        if (n <= 3) {
+            return n - 1;
+        }
         long res = 1;
         while (n > 4) {
             res *= 3;
@@ -2566,8 +2640,9 @@ public class testForCode {
         for (int i = 1; i < nums.length; i++) {
             if (dp[i - 1] <= 0) {
                 dp[i] = nums[i];
-            } else
+            } else {
                 dp[i] = dp[i - 1] + nums[i];
+            }
             if (dp[i] > max) {
                 max = dp[i];
             }
@@ -2778,7 +2853,9 @@ public class testForCode {
             }
         } else
             //如果已经被访问或者值不相同则直接返回
+        {
             return false;
+        }
     }
 
     /*
@@ -3035,6 +3112,11 @@ public class testForCode {
         chars[i] = chars[j];
         chars[j] = tmp;
     }
+    private void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
 
     public String[] permutation1(String s) {
         //去重
@@ -3194,8 +3276,9 @@ public class testForCode {
         while (curSum != target && left < right) {
             if (curSum < target) {
                 left++;
-            } else
+            } else {
                 right--;
+            }
             curSum = nums[left] + nums[right];
         }
         if (curSum == target) {
@@ -3344,8 +3427,9 @@ public class testForCode {
     //- 思路：1.采用链表来存放数据，每次对长度取余来实现循环，LinkedList比ArrayList更适合增删操作
     // 2.对于下标循环一圈类似的问题，通过%可以很好地实现循环，而不需要我们自己构造循环链表；
     public int lastRemaining(int n, int m) {
-        if (n < 1 || m < 1)
+        if (n < 1 || m < 1) {
             return -1; //出错
+        }
         LinkedList<Integer> list = new LinkedList<>();
         for (int i = 0; i < n; i++) {
             list.add(i);
@@ -3461,6 +3545,61 @@ public class testForCode {
         //直接返回 root 即可
         return (right == null) ? left : (left == null) ? right : root;
     }
+    /*
+    * 49. 丑数
+    * 我们把只包含因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。
+    * */
+    //- 思路：搜寻除以2，3，5后值能为1的数才记录
+    public int nthUglyNumber(int n) {
+        int count = 0;
+        int num = 0;
+        while (count <n) {
+            num++;
+            if (isUgly(num)) {
+                count++;
+            }
+        }
+        return num;
+    }
+    //动态规划
+    //设置三个指针p2,p3,p5,初始化所有指针都指向第一个丑数，即1
+    //我们从2*dp[p2], 3*dp[p3], 5*dp[p5]选取最小的一个数字，作为新的丑数。
+    //丑数一定是dp数组的元素乘以2，3，5，选出最小的加入，三个指针再数组中往下移动
+    public int nthUglyNumber1(int n) {
+        int p2 = 0;
+        int p3 = 0;
+        int p5 = 0;
+        int[] dp = new int[n];
+        dp[0] = 1;
+        for (int i = 1; i < n; i++) {
+            dp[i] = Math.min(dp[p2] * 2, Math.min(dp[p3] * 3, dp[5] * 5));
+            if (dp[i] == dp[p2] * 2) {
+                p2++;
+            }
+            if (dp[i] == dp[p3] * 2) {
+                p3++;
+            }
+            if (dp[i] == dp[p5] * 2) {
+                p5++;
+            }
+        }
+        return dp[n - 1];
+    }
+
+
+    private boolean isUgly(int num) {
+        while (num % 2 == 0) {
+            num /= 2;
+        }
+        while (num % 3 == 0) {
+            num /= 3;
+        }
+        while (num % 5 == 0) {
+            num /= 5;
+        }
+        return num == 1;
+    }
+
 
     public static void main(String[] args) {
         StringBuffer s = new StringBuffer("d ");
@@ -3482,11 +3621,16 @@ public class testForCode {
         root.right.left = new TreeNode(3);
         Codec codec = new Codec();
         codec.deserialize(codec.serialize(root));
-        System.out.println(new testForCode().countDigitOne1(12));
+        System.out.println(new testForCode().nthUglyNumber(10));
         new testForCode().isStraight(new int[]{1, 2, 3, 4, 5});
         System.out.println(Arrays.toString(new testForCode().reversePrint2(ListNode1)));
         System.out.println(new testForCode().cuttingRope(10));
+        AtomicInteger integer = new AtomicInteger(1);
+
+
     }
+
+
 }
 
 

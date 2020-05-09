@@ -1,3 +1,5 @@
+import com.sun.deploy.util.ArrayUtil;
+
 import java.util.*;
 
 
@@ -40,7 +42,7 @@ public class TestCode {
      * 输出：7 -> 0 -> 8
      * 原因：342 + 465 = 807
      */
-        public class ListNode {
+    public class ListNode {
         int val;
         ListNode next;
 
@@ -1374,7 +1376,7 @@ public class TestCode {
             }
             for (int r = r2 - 1; r >= r1 + 1; r--) {
                 ans[r][c1] = cur++;
-        }
+            }
             r1++;
             r2--;
             c1++;
@@ -1395,7 +1397,7 @@ public class TestCode {
         }
         int cur = 1;
 
-        while (cur <k) {
+        while (cur < k) {
 
             int i, j, x;
 
@@ -1406,7 +1408,7 @@ public class TestCode {
                 }
             }
             i = j - 1;
-            for (x = n-1 ; x >=j; x--) {
+            for (x = n - 1; x >= j; x--) {
                 if (ans[x] >= ans[i]) {
                     int temp = ans[x];
                     ans[x] = ans[i];
@@ -1421,10 +1423,7 @@ public class TestCode {
                 ans[j] = res;
             }
             cur++;
-
         }
-
-
         StringBuilder builder = new StringBuilder();
         for (int i : ans) {
             builder.append(i);
@@ -1432,6 +1431,7 @@ public class TestCode {
         return builder.toString();
 
     }
+
     /*
     * 62. 不同路径
     * 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
@@ -1454,40 +1454,118 @@ public class TestCode {
                 dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
             }
         }
-        return dp[m-1][n-1];
+        return dp[m - 1][n - 1];
     }
 
-    public String replaceSpace(String s) {
-        StringBuilder str = new StringBuilder(s);
-        if (str == null || str.length() == 0) {
-            return null;
-        }
-        int len = str.length();
-        int originalIndex = len - 1;
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == ' ') {
-                len += 2;
+    /*
+    * 63. 不同路径 II
+    * 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+    机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+    现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+    * */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        int dp[][] = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                dp[i][j] = 0;
             }
         }
-        str.setLength(len);
-        int curIndex = len - 1;
-        for (; curIndex >= 0 && curIndex != originalIndex; ) {
-            if (str.charAt(originalIndex) == ' ') {
-                str.setCharAt(curIndex--, '0');
-                str.setCharAt(curIndex--, '2');
-                str.setCharAt(curIndex--, '%');
-            } else {
-                str.setCharAt(curIndex--, str.charAt(originalIndex));
+        for (int i = 0; i < n; i++) {
+            if (obstacleGrid[0][i] == 1) {
+                break;
+
             }
-            originalIndex--;
+            dp[0][i] = 1;
         }
-        return str.toString();
+        for (int i = 0; i < m; i++) {
+            if (obstacleGrid[i][0] == 1) {
+                break;
+            }
+            dp[i][0] = 1;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (obstacleGrid[i][j] == 1) {
+                    continue;
+                }
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        return dp[m - 1][n - 1];
     }
+
+    /*
+    * 64. 最小路径和
+    * 给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+    说明：每次只能向下或者向右移动一步。
+    * */
+    public int minPathSum(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int dp[][] = new int[m][n];
+        dp[0][0] = grid[0][0];
+        for (int i = 1; i < n; i++) {
+            dp[0][i] = dp[0][i - 1] + grid[0][i];
+        }
+        for (int j = 1; j < m; j++) {
+            dp[j][0] = dp[j - 1][0] + grid[j][0];
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
+    /*
+    * 66. 加一
+    * 给定一个由整数组成的非空数组所表示的非负整数，在该数的基础上加一。
+    最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+    你可以假设除了整数 0 之外，这个整数不会以零开头。
+    * */
+    public int[] plusOne(int[] digits) {
+        int n = digits.length;
+        for (int i = n - 1; i >= 0; i--) {
+            digits[i]++;
+            digits[i] %= 10;
+            if (digits[i] != 0)
+                return digits;
+        }
+        digits = new int[n + 1];
+        digits[0] = 1;
+        return digits;
+    }
+
+    /*
+    * 67. 二进制求和
+    *内置函数
+    * */
+    public String addBinary(String a, String b) {
+        //将 a 和 b 转换为十进制整数。
+        //求和。
+        //将求和结果转换为二进制整数。
+        return Integer.toBinaryString(Integer.parseInt(a, 2) + Integer.parseInt(b, 2));
+    }
+
+    /*
+    * 69. x 的平方根
+    计算并返回 x 的平方根，其中 x 是非负整数。
+    由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
+    * */
+    public int mySqrt(int x) {
+
+
+    }
+
+
 
     public static void main(String[] args) {
         int[][] s = new int[][]{{1, 4}, {0, 4}};
 
-        System.out.println(new TestCode().getPermutation(3,3));
+        System.out.println(new TestCode().getPermutation(3, 3));
 
     }
 
