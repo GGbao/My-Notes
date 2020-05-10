@@ -1555,17 +1555,85 @@ public class TestCode {
     计算并返回 x 的平方根，其中 x 是非负整数。
     由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
     * */
-    public int mySqrt(int x) {
 
+    //(1) 一个非负整数的算数平方根一定在 0 和它自身之间，可以使用二分查找。
+    //(2) 大于等于 2 的算数平方根只保留整数部分都小于等于输入值的一半。
+    //(3) 不断查找中间值平方后和输入值比较来找到保留整数部分的算术平方根。
+    public int mySqrt(int x) {
+        if (x == 0) {
+            return 0;
+        }
+        if (x == 1) {
+            return 1;
+        }
+
+        int l = 2;
+        int r = x/2;
+        while (l <= r) {
+            int mid = l + (r-l) / 2;
+            long sum = (long)mid * mid;
+            if (sum > x) {
+                r=mid-1;
+            } else if (sum < x) {
+                l=mid+1;
+            } else {
+                return mid;
+            }
+        }
+        return r;
+    }
+
+    /*
+    * 70. 爬楼梯
+    * 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+    每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+    * */
+    public int climbStairs(int n) {
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+        }
+        return dp[n];
+    }
+
+    /*
+    73. 矩阵置零
+    给定一个 m x n 的矩阵，如果一个元素为 0，则将其所在行和列的所有元素都设为 0。请使用原地算法。
+    * */
+    public void setZeroes(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        Set<Integer> map_row = new HashSet();
+        Set<Integer> map_column = new HashSet();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == 0) {
+                    map_row.add(i);
+                    map_column.add(j);
+                }else
+                    continue;
+            }
+        }
+        for (int row : map_row) {
+            for (int i = 0; i < n; i++) {
+                matrix[row][i] = 0;
+            }
+        }
+        for (int column : map_column) {
+            for (int i = 0; i < m; i++) {
+                matrix[i][column] = 0;
+            }
+        }
 
     }
 
 
 
     public static void main(String[] args) {
-        int[][] s = new int[][]{{1, 4}, {0, 4}};
-
-        System.out.println(new TestCode().getPermutation(3, 3));
+        int[][] s = new int[][]{{1,1,1}, {1,0,1},{1,1,1}};
+        new TestCode().setZeroes(s);
 
     }
 
