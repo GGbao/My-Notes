@@ -1,5 +1,3 @@
-import com.sun.deploy.util.ArrayUtil;
-
 import java.util.*;
 
 
@@ -42,7 +40,7 @@ public class TestCode {
      * 输出：7 -> 0 -> 8
      * 原因：342 + 465 = 807
      */
-    public class ListNode {
+    public static class ListNode {
         int val;
         ListNode next;
 
@@ -145,7 +143,7 @@ public class TestCode {
 
     }
 
-    public double getMiddle(int num[]) {
+    public double getMiddle(int[] num) {
         double mid;
         if (num.length % 2 == 0) {
             mid = (num[(num.length - 1) / 2] + num[(num.length + 1) / 2]) / 2;
@@ -252,7 +250,9 @@ public class TestCode {
         }
         int len = Math.min(s.length(), numRows);
         String[] rows = new String[len];
-        for (int i = 0; i < len; i++) rows[i] = "";
+        for (int i = 0; i < len; i++) {
+            rows[i] = "";
+        }
         int loc = 0;
         boolean down = false;
         for (int i = 0; i < s.length(); i++) {
@@ -357,8 +357,9 @@ public class TestCode {
         for (int i = 1; i < n; i++) {
             int j = 0;
             for (; j < ans.length() && j < strs[i].length(); j++) {
-                if (ans.charAt(j) != strs[i].charAt(j))
+                if (ans.charAt(j) != strs[i].charAt(j)) {
                     break;
+                }
             }
             ans = ans.substring(0, j);
         }
@@ -395,8 +396,12 @@ public class TestCode {
 
                 if (sum == 0) {
                     ans.add(Arrays.asList(nums[i], nums[l], nums[r]));
-                    while (r > l && nums[l] == nums[l + 1]) l++;// 去重
-                    while (r > l && nums[r] == nums[r - 1]) r--;// 去重
+                    while (r > l && nums[l] == nums[l + 1]) {
+                        l++;// 去重
+                    }
+                    while (r > l && nums[r] == nums[r - 1]) {
+                        r--;// 去重
+                    }
                     l++;
                     r--;
                 } else if (sum < 0) {
@@ -529,8 +534,12 @@ public class TestCode {
                     int sum = nums[j] + nums[l] + nums[r];
                     if (sum == temp) {
                         ans.add(Arrays.asList(nums[i], nums[j], nums[l], nums[r]));
-                        while (l < r && nums[l] == nums[l + 1]) l++;
-                        while (l < r && nums[r] == nums[r - 1]) r--;
+                        while (l < r && nums[l] == nums[l + 1]) {
+                            l++;
+                        }
+                        while (l < r && nums[r] == nums[r - 1]) {
+                            r--;
+                        }
                         l++;
                         r--;
                     } else if (sum > temp) {
@@ -1072,7 +1081,7 @@ public class TestCode {
 
     * */
     public String multiply(String num1, String num2) {
-        if (num1.equals("0") || num2.equals("0")) {
+        if ("0".equals(num1) || "0".equals(num2)) {
             return "0";
 
         }
@@ -1293,23 +1302,24 @@ public class TestCode {
     public boolean canJump(int[] nums) {
         boolean[] dp = new boolean[nums.length];
         if (nums[0] == 0) {
-            if (nums.length == 1)
+            if (nums.length == 1) {
                 return true;
+            }
             return false;
         }
         dp[0] = true;
 
         for (int i = 1; i < nums.length; i++) {
-            if (dp[nums.length - 1])
+            if (dp[nums.length - 1]) {
                 break;
-
-            else if (dp[i - 1] && nums[i - 1] > 0) {
+            } else if (dp[i - 1] && nums[i - 1] > 0) {
                 dp[i] = true;
                 for (int j = 1; j <= nums[i - 1] && i + j <= nums.length; j++) {
                     dp[i + j - 1] = true;
                 }
-            } else
+            } else {
                 dp[i] = false || dp[i];
+            }
 
         }
         return dp[nums.length - 1];
@@ -1442,7 +1452,7 @@ public class TestCode {
 
      * */
     public int uniquePaths(int m, int n) {
-        int dp[][] = new int[m][n];
+        int[][] dp = new int[m][n];
         for (int i = 0; i < n; i++) {
             dp[0][i] = 1;
         }
@@ -1466,7 +1476,7 @@ public class TestCode {
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
         int m = obstacleGrid.length;
         int n = obstacleGrid[0].length;
-        int dp[][] = new int[m][n];
+        int[][] dp = new int[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 dp[i][j] = 0;
@@ -1504,7 +1514,7 @@ public class TestCode {
     public int minPathSum(int[][] grid) {
         int m = grid.length;
         int n = grid[0].length;
-        int dp[][] = new int[m][n];
+        int[][] dp = new int[m][n];
         dp[0][0] = grid[0][0];
         for (int i = 1; i < n; i++) {
             dp[0][i] = dp[0][i - 1] + grid[0][i];
@@ -1531,8 +1541,9 @@ public class TestCode {
         for (int i = n - 1; i >= 0; i--) {
             digits[i]++;
             digits[i] %= 10;
-            if (digits[i] != 0)
+            if (digits[i] != 0) {
                 return digits;
+            }
         }
         digits = new int[n + 1];
         digits[0] = 1;
@@ -1540,9 +1551,9 @@ public class TestCode {
     }
 
     /*
-    * 67. 二进制求和
-    *内置函数
-    * */
+     * 67. 二进制求和
+     *内置函数
+     * */
     public String addBinary(String a, String b) {
         //将 a 和 b 转换为十进制整数。
         //求和。
@@ -1566,16 +1577,15 @@ public class TestCode {
         if (x == 1) {
             return 1;
         }
-
         int l = 2;
-        int r = x/2;
+        int r = x / 2;
         while (l <= r) {
-            int mid = l + (r-l) / 2;
-            long sum = (long)mid * mid;
+            int mid = l + (r - l) / 2;
+            long sum = (long) mid * mid;
             if (sum > x) {
-                r=mid-1;
+                r = mid - 1;
             } else if (sum < x) {
-                l=mid+1;
+                l = mid + 1;
             } else {
                 return mid;
             }
@@ -1612,8 +1622,9 @@ public class TestCode {
                 if (matrix[i][j] == 0) {
                     map_row.add(i);
                     map_column.add(j);
-                }else
+                } else {
                     continue;
+                }
             }
         }
         for (int row : map_row) {
@@ -1629,20 +1640,399 @@ public class TestCode {
 
     }
 
+    /*
+    *74. 搜索二维矩阵
+        编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：
+        每行中的整数从左到右按升序排列。
+        每行的第一个整数大于前一行的最后一个整数。
+    * */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0) {
+            return false;
+        }
+        int r = 0;
+        int c = matrix[0].length - 1;
+        while (r < matrix.length && c >= 0) {
+            if (matrix[r][c] == target) {
+                return true;
+            } else if (matrix[r][c] > target) {
+                c--;
+            } else {
+                r++;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * 75. 颜色分类
+     * 给定一个包含红色、白色和蓝色，一共 n 个元素的数组，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列
+     * 此题中，我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。
+     * */
+    //快排
+    public void sortColors(int[] nums) {
+        int start = 0;
+        int end = nums.length - 1;
+        quickSort(nums, start, end);
+    }
+
+    private void quickSort(int[] nums, int start, int end) {
+        if (start < end) {
+            int i = adjustArray(nums, start, end);
+            quickSort(nums, start, i - 1);
+            quickSort(nums, i + 1, end);
+        }
+    }
+
+    private int adjustArray(int[] nums, int l, int r) {
+        int x = nums[l];
+        while (l < r) {
+            while (l < r && x <= nums[r]) {
+                r--;
+            }
+            if (l < r) {
+                nums[l++] = nums[r];
+            }
+            while (l < r && x >= nums[l]) {
+                l++;
+            }
+            if (l < r) {
+                nums[r--] = nums[l];
+            }
+        }
+        nums[l] = x;
+        return l;
+    }
+
+    /*
+     * 77. 组合
+     * 给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。
+     * 回溯算法就是在一个树形问题上的深度优先遍历，所以先把这个问题对应的树的结构画出来,一定要画图！
+     * */
+    public List<List<Integer>> combine(int n, int k) {
+        if (n <= 0 || k <= 0 || n < k) {
+            return res;
+        }
+        findCombine(n, k, 1, new LinkedList<>());
+        return res;
+    }
+
+    private void findCombine(int n, int k, int begin, LinkedList<Integer> pre) {
+        if (pre.size() == k) {
+            res.add(new ArrayList<>(pre));
+            return;
+        }
+        for (int i = begin; i <= n; i++) {
+            pre.add(i);
+            findCombine(n, k, i + 1, pre);
+            //剔除已经加入的元素，往下遍历
+            pre.removeLast();
+        }
+    }
+
+    /*
+     * 78. 子集
+     * 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+     * */
+    public List<List<Integer>> subsets(int[] nums) {
+        int n = nums.length;
+        Arrays.sort(nums);
+        for (int i = 0; i <= n; i++) {
+            findSub(n, i, nums, 0, new LinkedList<>());
+        }
+        return res;
+    }
+
+    private void findSub(int n, int i, int[] nums, int begin, LinkedList<Integer> pre) {
+        if (pre.size() == i) {
+            res.add(new ArrayList<>(pre));
+            return;
+        }
+        for (int j = begin; j < n; j++) {
+            pre.add(nums[j]);
+            findSub(n, i, nums, j + 1, pre);
+            pre.removeLast();
+        }
+    }
+
+    /*
+    *79. 单词搜索
+        给定一个二维网格和一个单词，找出该单词是否存在于网格中。
+        单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。
+        同一个单元格内的字母不允许被重复使用。
+    * */
+    boolean[][] isVisited;
+    int[][] direction = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+    int m, n;
+
+    public boolean exist(char[][] board, String word) {
+        m = board.length;
+        n = board[0].length;
+        isVisited = new boolean[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dfs79(i, j, 0, word, board)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param index 指针指向的索引
+     */
+    private boolean dfs79(int i, int j, int index, String word, char[][] board) {
+        if (index == word.length() - 1) {
+            return board[i][j] == word.charAt(index);
+        }
+        if (board[i][j] == word.charAt(index)) {
+            isVisited[i][j] = true;
+            for (int k = 0; k < 4; k++) {
+                int x = i + direction[k][0];
+                int y = j + direction[k][1];
+                //在范围内在进行下一个坐标比较
+                if (inArea(x, y) && !isVisited[x][y] && dfs79(x, y, index + 1, word, board)) {
+                    return true;
+                }
+            }
+            //四个方向都不对时就回溯
+            isVisited[i][j] = false;
+        }
+        return false;
+    }
+
+    private boolean inArea(int x, int y) {
+        return x >= 0 && y >= 0 && x < m && y < n;
+    }
+
+    /*
+     * 26. 删除排序数组中的重复项
+     * 给定一个排序数组，你需要在 原地 删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
+     * */
+    //思路：考虑用 2 个指针，一个在前记作 p，一个在后记作 q，算法流程如下：
+    //1.比较 p 和 q 位置的元素是否相等。
+    //如果相等，q 后移 1 位
+    //如果不相等，将 q 位置的元素复制到 p+1 位置上，p 后移一位，q 后移 1 位
+    //重复上述过程，直到 q 等于数组长度。
+    //返回 p + 1，即为新数组长度。
+
+    public int removeDuplicates26(int[] nums) {
+        int p = 0, q = 1;
+        while (q < nums.length) {
+            if (nums[p] != nums[q]) {
+                nums[p + 1] = nums[q];
+                p++;
+            }
+            q++;
+        }
+        return p + 1;
+    }
+
+    //对index变量进行修改:[0,index] 表示不重复元素集合
+    public int removeDuplicates26_2(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        // 1.指针定义 [0,index] 是修改后无重复的排序元素 注意 这里已经把0纳入进去了
+        int index = 0;
+        // 2.另一个循环指针 从1开始，终止为nums.length，为什么从1开始 因为我们要比较重复 nums[0] 肯定是不重复的
+        for (int i = 1; i < nums.length; i++) {
+            // 3.指针运动的条件
+            if (nums[index] != nums[i]) {
+                index++;
+                nums[index] = nums[i];
+            }
+        }
+        // 4.根据定义确定返回值
+        return index + 1;
+    }
 
 
-    public static void main(String[] args) {
-        int[][] s = new int[][]{{1,1,1}, {1,0,1},{1,1,1}};
-        new TestCode().setZeroes(s);
+    /*
+    * 80. 删除排序数组中的重复项 II
+    给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素最多出现两次，返回移除后数组的新长度。
+    * */
+    public int removeDuplicates(int[] nums) {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i])) {
+                if (map.get(nums[i]) < 2) {
+                    map.put(nums[i], map.get(nums[i]) + 1);
+                }
+            } else {
+                map.put(nums[i], 1);
+            }
+        }
+        int count = 0;
+        int cur = 0;
+        for (Integer num : map.keySet()) {
+            count += map.get(num);
+            for (; cur < count; cur++) {
+                nums[cur] = num;
+            }
+
+        }
+
+        return count;
+    }
+
+    public int removeDuplicates_1(int[] nums) {
+        if (nums == null) {
+            return 0;
+        }
+        if (nums.length <= 2) {
+            return nums.length;
+        }
+        //定义[0,index]是修改后满足的数组区间
+        //先把k-1个元素装入
+        int index = 1;
+        //判断中止条件,k开始
+        for (int i = 2; i < nums.length; i++) {
+            //指针移动(index-1)为重复区间的首个元素[index-k+1]
+            if (nums[i] != nums[index - 1]) {
+                index++;
+                nums[index] = nums[i];
+            }
+        }
+        return index + 1;
+    }
+
+    /*
+     * 82. 删除排序链表中的重复元素 II
+     * 给定一个排序链表，删除所有含有重复数字的节点，只保留原始链表中 没有重复出现 的数字。
+     * */
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode pre = new ListNode(-1);
+        pre.next = head;
+        ListNode slow = pre;
+        ListNode fast = pre.next;
+        while (fast != null) {
+            //判断快节点到重复之前
+            while (fast.next != null && fast.val == fast.next.val) {
+                fast = fast.next;
+            }
+            //没有重复，慢节点后移
+            if (slow.next == fast) {
+                slow = slow.next;
+            } else {
+                slow.next = fast.next;
+            }
+            //每次快节点都要后移
+            fast = fast.next;
+        }
+        return pre.next;
+    }
+
+    /*
+     * 83. 删除排序链表中的重复元素
+     * 给定一个排序链表，删除所有重复的元素，使得每个元素只出现一次。
+     * */
+    public ListNode deleteDuplicates83(ListNode head) {
+        ListNode pre = new ListNode(-1000);
+        pre.next = head;
+        ListNode slow = pre;
+        ListNode fast = pre.next;
+        while (slow.next != null) {
+            if (slow.val != fast.val) {
+                slow = fast;
+                fast = fast.next;
+            } else {
+                fast = fast.next;
+            }
+            slow.next = fast;
+        }
+        return pre.next;
 
     }
 
+    /*
+     * 86. 分隔链表
+     * 给定一个链表和一个特定值 x，对链表进行分隔，使得所有小于 x 的节点都在大于或等于 x 的节点之前。
+     * */
+    public ListNode partition(ListNode head, int x) {
+        ListNode pre1 = new ListNode(0);//记录小值链表的头
+        ListNode minC = pre1;//对小表操作用的指针
+        ListNode pre2 = new ListNode(0);//记录大值链表的头
+        ListNode maxC = pre2;//对大表操作用的指针
+        ListNode cur = head;
+        while (cur != null) {
+            if (cur.val < x) {
+                minC.next = cur;//放入小值链表中，指针后移一位
+                minC = cur;
+            } else {
+                maxC.next = cur;
+                maxC = cur;
+            }
+            cur = cur.next;
+        }
+        //遍历完后一段链表的最后节点指向null
+        maxC.next = null;
+        minC.next = pre2.next;
+        return pre1.next;
+    }
+
+    /*
+     * 88. 合并两个有序数组
+     * 给你两个有序整数数组 nums1 和 nums2，请你将 nums2 合并到 nums1 中，使 nums1 成为一个有序数组。
+     * */
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int index = m + n - 1;
+        if (m == 0) {
+            for (int i = 0; i <= index; i++) {
+                nums1[i] = nums2[i];
+            }
+        }
+
+        while (n > 0 && m > 0 && index >= 0) {
+            if (nums1[m - 1] <= nums2[n - 1]) {
+                nums1[index--] = nums2[--n];
+            } else {
+                nums1[index--] = nums1[--m];
+            }
+        }
+        while (n > 0) {
+            nums1[index--] = nums2[--n];
+        }
+
+    }
+
+    /*
+    * 90. 子集 II
+    * 给定一个可能包含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+        说明：解集不能包含重复的子集。
+    * */
+//    Set<List<Integer>> set = new HashSet<>();
+
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        for (int i = 0; i <= n; i++) {
+            findSub90(n, i, 0, nums, new LinkedList<>());
+        }
+        return res;
+    }
+
+    private void findSub90(int n, int i, int begin, int[] nums, LinkedList<Integer> pre) {
+        if (pre.size() == i) {
+            if (!res.contains(pre)) {
+                res.add(new ArrayList<>(pre));
+            }
+            return;
+        }
+        for (int j = begin; j < n; j++) {
+            pre.add(nums[j]);
+            findSub90(n, i, j + 1, nums, pre);
+            pre.removeLast();
+        }
+    }
+
+
+    public static void main(String[] args) {
+        int[] s1 = new int[]{0};
+        int[] s2 = new int[]{1};
+        new TestCode().merge(s1, 0, s2, 1);
+
+
+    }
 }
-
-
-
-
-
-
-
-
