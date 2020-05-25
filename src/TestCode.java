@@ -1,7 +1,17 @@
+import javax.swing.tree.TreeNode;
 import java.util.*;
 
 
 public class TestCode {
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
 
     /*
     1、两数之和
@@ -2027,10 +2037,240 @@ public class TestCode {
         }
     }
 
+    /*
+     *91. 解码方法
+     * 一条包含字母 A-Z 的消息通过以下方式进行了编码：
+     * */
+    //dp[]，用来记录以某个字符为开始的解码数
+    //num[i]=0,dp[i]=0
+    //如果num[i]+num[i+1]<=26,dp[i]=dp[i+1]+dp[i+2],否则dp[i]=dp[i+1];
+    public int numDecodings(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int len = s.length();
+        int[] dp = new int[len + 1];
+        //设置最后一位为1
+        dp[len] = 1;
+        if (s.charAt(len - 1) == '0') {
+            dp[len - 1] = 0;
+        } else {
+            dp[len - 1] = 1;
+        }
+        for (int i = len - 2; i >= 0; i--) {
+            if (s.charAt(i) == '0') {
+                dp[i] = 0;
+                continue;
+            }
+            if ((s.charAt(i) - '0') * 10 + (s.charAt(i + 1) - '0') <= 26) {
+                dp[i] = dp[i + 1] + dp[i + 2];
+            } else {
+                dp[i] = dp[i + 1];
+            }
+        }
+        return dp[0];
+    }
+
+    /*
+     * 92. 反转链表 II
+     * 反转从位置 m 到 n 的链表。请使用一趟扫描完成反转。
+     * */
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        ListNode pre = new ListNode(-1);
+        pre.next = head;
+        ListNode g = pre;
+        int count = 1;
+
+        while (count < m) {
+            g = g.next;
+            count++;
+        }
+        //g为指定节点之前的节点，cur为当前节点
+        ListNode cur = g.next;
+        for (int i = 0; i < n - m; i++) {
+            ListNode removed = cur.next;
+            cur.next = cur.next.next;
+            removed.next = g.next;
+            g.next = removed;
+        }
+        return pre.next;
+    }
+
+    /*
+     * 93. 复原IP地址
+     * 给定一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式。
+     * 有效的 IP 地址正好由四个整数（每个整数位于 0 到 255 之间组成），整数之间用 '.' 分隔。
+     * */
+    //splitTimes：已经分割出多少个 ip 段；
+    //begin：截取 ip 段的起始位置；
+    //path：记录从根结点到叶子结点的一个路径（回溯算法常规变量，是一个栈）；
+    //res：记录结果集的变量，常规变量。
+
+    public List<String> restoreIpAddresses(String s) {
+        int n = s.length();
+        List<String> res = new ArrayList<>();
+        //如果长度不够，不搜索
+        if (n < 4 || n > 12) {
+            return res;
+        }
+        int splitTimes = 0;
+        Deque<String> path = new ArrayDeque<>(4);
+        dfs93(s, n, splitTimes, 0, path, res);
+        return res;
+    }
+
+    private void dfs93(String s, int n, int splitTimes, int begin, Deque<String> path, List<String> res) {
+        //中止条件
+        if (begin == n) {
+            if (splitTimes == 4) {
+                res.add(String.join(".", path));
+            }
+            return;
+        }
+        //看剩下的不够了，就退出剪枝，n-begin表示剩余的还未分割的字符串位数
+        if (n - begin < (4 - splitTimes) || n - begin > 3 * (4 - splitTimes)) {
+            return;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (begin + i >= n) {
+                break;
+            }
+            int ipSegment = isvalid(s, begin, begin + i);
+            if (ipSegment != -1) {
+                //再判断ip段有效时才去截取
+                path.addLast(ipSegment + "");
+                dfs93(s, n, splitTimes + 1, begin + i + 1, path, res);
+                path.removeLast();
+            }
+        }
+
+    }
+
+    //判断s的子区间是否有效
+    private int isvalid(String s, int left, int right) {
+        int n = right - left + 1;
+        // 大于 1 位的时候，不能以 0 开头
+        if (n > 1 && s.charAt(left) == '0') {
+            return -1;
+        }
+        //转成int类型
+        int res = 0;
+        for (int i = left; i <= right; i++) {
+            res = res * 10 + s.charAt(i) - '0';
+        }
+        if (res > 255) {
+            return -1;
+        }
+        return res;
+    }
+
+    /*
+     * 94. 二叉树的中序遍历
+     * 给定一个二叉树，返回它的中序 遍历。
+     * */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        //stack栈顶元素永远为cur父节点
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> list = new ArrayList<>();
+        TreeNode cur = root;
+        if (cur == null) {
+            return list;
+        }
+        while (cur != null || !stack.isEmpty()) {
+            //先到达最左节点
+            if (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            } else {
+                list.add(stack.peek().val);
+                cur = stack.pop().right;
+            }
+        }
+        return list;
+    }
+
+    /*
+    * 95. 不同的二叉搜索树 II
+    * 给定一个整数 n，生成所有由 1 ... n 为节点所组成的二叉搜索树
+    * */
+    public List<TreeNode> generateTrees(int n) {
+        List<TreeNode> res = new ArrayList<>();
+        if (n == 0) {
+            return res;
+        }
+        return getRes(1, n);
+
+    }
+
+    private List<TreeNode> getRes(int start, int end) {
+        List<TreeNode> res = new ArrayList<>();
+        //此时没有数字，把null作为子树加入结果
+        if (start > end) {
+            res.add(null);
+            return res;
+        }
+        //只有一个数组，当前数字作为一颗字数加入结果集
+        if (start == end) {
+            TreeNode tree = new TreeNode(start);
+            res.add(tree);
+            return res;
+        }
+        //尝试每个数字作为根节点
+        for (int i = start; i <= end; i++) {
+            //得到所有可能的左子树
+            List<TreeNode> leftTrees = getRes(start, i - 1);
+            //得到所有可能的右子树
+            List<TreeNode> rightTrees = getRes(i + 1, end);
+            //左右字数组合
+            for (TreeNode leftTree : leftTrees) {
+                for (TreeNode rightTree : rightTrees) {
+                    //根节点
+                    TreeNode root = new TreeNode(i);
+                    root.left = leftTree;
+                    root.right = rightTree;
+                    //加入结果集
+                    res.add(root);
+                }
+            }
+        }
+        return res;
+    }
+
+    /*
+    * 96. 不同的二叉搜索树
+    * 给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
+    * */
+    /*
+    * 标签：动态规划
+假设n个节点存在二叉排序树的个数是G(n)，令f(i)为以i为根的二叉搜索树的个数，则
+    1、G(n) = f(1) + f(2) + f(3) + f(4) + ... + f(n)
+        当i为根节点时，其左子树节点个数为i-1个，右子树节点为n-i，则
+    2、f(i) = G(i-1)*G(n-i)
+        综合两个公式可以得到 卡特兰数 公式
+    3、G(n) = G(0)*G(n-1)+G(1)*(n-2)+...+G(n-1)*G(0)
+    * */
+    public int numTrees(int n) {
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        for (int i = 2; i < n + 1; i++) {
+            for (int j = 1; j < i + 1; j++) {
+                dp[i] += dp[j - 1] * dp[i - j];
+            }
+        }
+        return dp[n];
+    }
+
+
+
 
     public static void main(String[] args) {
         int[] s1 = new int[]{0};
         int[] s2 = new int[]{1};
+        ListNode ListNode1 = new ListNode(3);
+        ListNode ListNode2 = new ListNode(5);
+        ListNode1.next = ListNode2;
+        new TestCode().reverseBetween(ListNode1, 1, 2);
         new TestCode().merge(s1, 0, s2, 1);
 
 
