@@ -2261,7 +2261,125 @@ public class TestCode {
         return dp[n];
     }
 
+    /*98. 验证二叉搜索树
+    * 给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+    假设一个二叉搜索树具有如下特征：
+        节点的左子树只包含小于当前节点的数。
+        节点的右子树只包含大于当前节点的数。
+        所有左子树和右子树自身必须也是二叉搜索树。
 
+    * */
+    //二叉搜索树中序遍历为升序
+    public boolean isValidBST(TreeNode root) {
+        long pre = Long.MIN_VALUE;
+        Stack<TreeNode> stack = new Stack<>();
+        while (!stack.isEmpty() || root != null) {
+            if (root != null) {
+                stack.push(root);
+                root = root.left;
+            } else {
+                root = stack.pop();
+                // 如果中序遍历得到的节点的值小于等于前一个 inorder，说明不是二叉搜索树
+                if (root.val <= pre) {
+                    return false;
+                }
+                pre = root.val;
+                root = root.right;
+            }
+        }
+        return true;
+    }
+
+    /*
+    100. 相同的树
+    给定两个二叉树，编写一个函数来检验它们是否相同。
+    如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。
+    * */
+//    终止条件与返回值：
+//    当两棵树的当前节点都为 null 时返回 true
+//    当其中一个为 null 另一个不为 null 时返回 false
+//    当两个都不为空但是值不相等时，返回 false
+//    执行过程：当满足终止条件时进行返回，不满足时分别判断左子树和右子树是否相同，其中要注意代码中的短路效应
+    /*
+    * 针对树的框架：
+    * void traverse(TreeNode root) {
+    // root 需要做什么？在这做。
+    // 其他的不用 root 操心，抛给框架
+    traverse(root.left);
+    traverse(root.right);
+    }
+    * 针对二叉搜索树
+    * void BST(TreeNode root, int target) {
+    if (root.val == target)
+        // 找到目标，做点什么
+    if (root.val < target)
+        BST(root.right, target);
+    if (root.val > target)
+        BST(root.left, target);
+    }
+    * */
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        //    当两棵树的当前节点都为 null 时返回 true
+        if(p == null && q == null)
+            return true;
+        //    当其中一个为 null 另一个不为 null 时返回 false
+        if(p == null || q == null)
+            return false;
+        //    当两个都不为空但是值不相等时，返回 false
+        if(p.val != q.val)
+            return false;
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+    /*
+    * 101. 对称二叉树
+    * 给定一个二叉树，检查它是否是镜像对称的。
+    * */
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        return isSymmetric(root.left, root.right);
+    }
+
+    private boolean isSymmetric(TreeNode left, TreeNode right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null || right == null) {
+            return false;
+        }
+        return left.val == right.val && isSymmetric(left.right, right.left) && isSymmetric(left.left, right.right);
+    }
+
+    /*
+     * 102. 二叉树的层序遍历
+     * */
+    List<List<Integer>> res_102 = new ArrayList<>();
+
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        if (root == null) {
+            return res_102;
+        }
+        Deque<TreeNode> deque = new ArrayDeque<>();
+        TreeNode front = null;
+        deque.add(root);
+        while (!deque.isEmpty()) {
+            List<Integer> list = new ArrayList<>();
+            //每一层的个数
+            for (int i = deque.size(); i > 0; i--) {
+                front = deque.poll();
+                list.add(front.val);
+                if (front.left != null) {
+                    deque.add(front.left);
+                }
+                if (front.right != null) {
+                    deque.add(front.right);
+                }
+            }
+            res_102.add(list);
+        }
+        return res_102;
+    }
 
 
     public static void main(String[] args) {
