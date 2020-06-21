@@ -1,3 +1,5 @@
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+
 import javax.swing.tree.TreeNode;
 import java.util.*;
 
@@ -2190,9 +2192,9 @@ public class TestCode {
     }
 
     /*
-    * 95. 不同的二叉搜索树 II
-    * 给定一个整数 n，生成所有由 1 ... n 为节点所组成的二叉搜索树
-    * */
+     * 95. 不同的二叉搜索树 II
+     * 给定一个整数 n，生成所有由 1 ... n 为节点所组成的二叉搜索树
+     * */
     public List<TreeNode> generateTrees(int n) {
         List<TreeNode> res = new ArrayList<>();
         if (n == 0) {
@@ -2237,9 +2239,9 @@ public class TestCode {
     }
 
     /*
-    * 96. 不同的二叉搜索树
-    * 给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
-    * */
+     * 96. 不同的二叉搜索树
+     * 给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
+     * */
     /*
     * 标签：动态规划
 假设n个节点存在二叉排序树的个数是G(n)，令f(i)为以i为根的二叉搜索树的个数，则
@@ -2320,20 +2322,21 @@ public class TestCode {
     * */
     public boolean isSameTree(TreeNode p, TreeNode q) {
         //    当两棵树的当前节点都为 null 时返回 true
-        if(p == null && q == null)
+        if (p == null && q == null)
             return true;
         //    当其中一个为 null 另一个不为 null 时返回 false
-        if(p == null || q == null)
+        if (p == null || q == null)
             return false;
         //    当两个都不为空但是值不相等时，返回 false
-        if(p.val != q.val)
+        if (p.val != q.val)
             return false;
         return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
     }
+
     /*
-    * 101. 对称二叉树
-    * 给定一个二叉树，检查它是否是镜像对称的。
-    * */
+     * 101. 对称二叉树
+     * 给定一个二叉树，检查它是否是镜像对称的。
+     * */
     public boolean isSymmetric(TreeNode root) {
         if (root == null) {
             return true;
@@ -2381,6 +2384,410 @@ public class TestCode {
         return res_102;
     }
 
+    /*
+    103. 二叉树的锯齿形层次遍历
+    * */
+    List<List<Integer>> res_103 = new ArrayList<>();
+
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        if (root == null) {
+            return res_103;
+        }
+        Deque<TreeNode> deque = new ArrayDeque<>();
+        TreeNode front = null;
+        deque.add(root);
+        int flag = 1;
+        while (!deque.isEmpty()) {
+            List<Integer> list = new ArrayList<>();
+            int[] temp = new int[deque.size()];
+            for (int i = deque.size() - 1; i >= 0; i--) {
+                front = deque.poll();
+                temp[i] = front.val;
+                if (front.left != null) {
+                    deque.add(front.left);
+                }
+                if (front.right != null) {
+                    deque.add(front.right);
+                }
+            }
+            if (flag % 2 == 0) {
+                for (int i = 0; i < temp.length; i++) {
+                    list.add(temp[i]);
+                }
+            }
+            if (flag % 2 != 0) {
+                for (int i = temp.length - 1; i >= 0; i--) {
+                    list.add(temp[i]);
+                }
+            }
+            flag++;
+            res_103.add(list);
+        }
+        return res_103;
+    }
+
+    /*
+     * 104. 二叉树的最大深度
+     * */
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = maxDepth(root.left);
+        int right = maxDepth(root.right);
+        //root深度比子树的最大深度+1
+        return right > left ? right + 1 : left + 1;
+
+    }
+
+    /*
+     * 105. 从前序与中序遍历序列构造二叉树
+     * */
+    int[] preOrd;
+    HashMap<Integer, Integer> dic = new HashMap<>();
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        preOrd = preorder;
+        for (int i = 0; i < inorder.length; i++) {
+            dic.put(inorder[i], i);
+        }
+        return rebuild(0, 0, inorder.length - 1);
+    }
+
+    /**
+     * @param pre_root 前序遍历中根节点的索引
+     * @param in_left  中序遍历左边界
+     * @param in_right 中序遍历右边界
+     * @return
+     */
+    private TreeNode rebuild(int pre_root, int in_left, int in_right) {
+        if (in_left > in_right) {
+            return null;
+        }
+        //找出头节点
+        TreeNode root = new TreeNode(preOrd[pre_root]);
+        //找出头节点在中序中的索引位置
+        int i = dic.get(preOrd[pre_root]);
+        root.left = rebuild(pre_root + 1, in_left, i - 1);
+        root.right = rebuild(pre_root + (i - in_left + 1), i + 1, in_right);
+        return root;
+    }
+
+    /*
+     * 106. 从中序与后序遍历序列构造二叉树
+     * */
+    int[] postOrd;
+    HashMap<Integer, Integer> dic106 = new HashMap<>();
+
+    public TreeNode buildTree106(int[] inorder, int[] postorder) {
+        postOrd = postorder;
+        for (int i = 0; i < inorder.length; i++) {
+            dic106.put(inorder[i], i);
+        }
+        return rebuild109(postorder.length - 1, 0, inorder.length - 1);
+
+    }
+
+    private TreeNode rebuild109(int post_root, int in_left, int in_right) {
+        if (in_left > in_right) {
+            return null;
+        }
+        //头节点
+        TreeNode root = new TreeNode(postOrd[post_root]);
+        //找到在中序中的索引位置
+        int i = dic106.get(postOrd[post_root]);
+        root.right = rebuild109(post_root - 1, i + 1, in_right);
+        root.left = rebuild109(post_root - (in_right - i) - 1, in_left, i - 1);
+        return root;
+    }
+
+    /*
+     * 107. 二叉树的层次遍历 II
+     * 给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+     * */
+    List<List<Integer>> res_107 = new ArrayList<>();
+
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        if (root == null) {
+            return res_107;
+        }
+        Deque<TreeNode> deque = new ArrayDeque<>();
+        TreeNode front;
+        deque.add(root);
+        while (!deque.isEmpty()) {
+            List<Integer> list = new ArrayList<>();
+            for (int i = deque.size(); i > 0; i--) {
+                front = deque.poll();
+                list.add(front.val);
+                if (front.left != null) {
+                    deque.add(front.left);
+                }
+                if (front.right != null) {
+                    deque.add(front.right);
+                }
+            }
+            res_107.add(0, list);
+        }
+
+//        swap(res_107);
+        return res_107;
+    }
+
+    /*private void swap(List<List<Integer>> res_107) {
+        int i = 0;
+        int j = res_107.size() - 1;
+        while (i< j) {
+            List<Integer> list = new ArrayList<>(res_107.get(i));
+            res_107.set(i, res_107.get(j));
+            res_107.set(j, list);
+            i++;
+            j--;
+        }
+    }*/
+
+    /*
+     * 108. 将有序数组转换为二叉搜索树
+     * */
+    //根据根节点，就可以递归的生成左右子树。
+//    注意这里的边界情况，包括左边界，不包括右边界。
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return sortedArrayToBST(nums, 0, nums.length - 1);
+    }
+
+    private TreeNode sortedArrayToBST(int[] nums, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        int mid = start + (end - start) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = sortedArrayToBST(nums, start, mid - 1);
+        root.right = sortedArrayToBST(nums, mid + 1, end);
+        return root;
+    }
+
+    /*
+     * 109. 有序链表转换二叉搜索树
+     * */
+    public TreeNode sortedListToBST(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        while (head != null) {
+            list.add(head.val);
+            head = head.next;
+        }
+        return sortedListToBST(list, 0, list.size() - 1);
+
+    }
+
+    private TreeNode sortedListToBST(List<Integer> list, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        int mid = start + (end - start) / 2;
+        TreeNode root = new TreeNode(list.get(mid));
+        root.left = sortedListToBST(list, start, mid - 1);
+        root.right = sortedListToBST(list, mid + 1, end);
+        return root;
+    }
+
+    /*
+     * 110. 平衡二叉树
+     * 一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1。
+     * */
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        return Math.abs(treeDepth(root.left) - treeDepth(root.right)) <= 1
+                && isBalanced(root.left)
+                && isBalanced(root.right);
+
+    }
+
+    private int treeDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = treeDepth(root.left);
+        int right = treeDepth(root.right);
+        return Math.max(left, right)+1;
+    }
+    /*
+    * 111. 二叉树的最小深度
+    * 最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+    * */
+    //叶子节点的定义是左孩子和右孩子都为 null 时叫做叶子节点
+    //当 root 节点左右孩子都为空时，返回 1
+    //当 root 节点左右孩子有一个为空时，返回不为空的孩子节点的深度
+    //当 root 节点左右孩子都不为空时，返回左右孩子较小深度的节点值
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        //1.左孩子和有孩子都为空的情况，说明到达了叶子节点，直接返回1即可
+        if (root.right == null && root.right == null) {
+            return 1;
+        }
+        //2.如果左孩子和右孩子其中一个为空，那么需要返回比较大的那个孩子的深度
+        int left = minDepth(root.left);
+        int right = minDepth(root.right);
+        if (root.left == null || root.right == null) {
+            return left + right + 1;
+        }
+        //3.最后一种情况，也就是左右孩子都不为空，返回最小深度+1即可
+        return Math.min(left, right) + 1;
+    }
+
+    /*
+    * 112. 路径总和
+    * 给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。
+    * */
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) {
+            return false;
+        }
+        // 如果是叶子结点，则看该结点值是否等于剩下的 sum
+        if (root.left == null && root.right == null) {
+            return sum == root.val;
+        }
+        // 每次遍历一个结点都要减去自己的值后重新递归
+        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+    }
+
+    /*
+     * 113. 路径总和 II
+     * 给定一个二叉树和一个目标和，找到所有从根节点到叶子节点路径总和等于给定目标和的路径。
+     * */
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        pathSum(res, root, sum, 0, new ArrayList<Integer>());
+        return res;
+    }
+
+    private void pathSum(List<List<Integer>> res, TreeNode root, int sum, int cur, List<Integer> path) {
+        cur += root.val;
+        path.add(root.val);
+        //找到符合的路径，就添加到res中，注意Java是引用类型，加入最终ans必须进行深拷贝
+        if (cur == sum && root.left == null && root.right == null) {
+            res.add(new ArrayList<>(path));
+        }
+        if (root.left != null) {
+            pathSum(res, root.left, sum, cur, path);
+            //递归结束，找到的结果都已添加
+            path.remove(path.size() - 1);//移除最后的节点
+        }
+        if (root.right != null) {
+            pathSum(res, root.right, sum, cur, path);
+            //递归结束，找到的结果都已添加
+            path.remove(path.size() - 1);//移除最后的节点
+        }
+    }
+
+    /*
+    * 114. 二叉树展开为链表
+    * 给定一个二叉树，原地将它展开为一个单链表。
+    * */
+    //这就是一个递归的过程，递归的一个非常重要的点就是：不去管函数的内部细节是如何处理的，我们只看其函数作用以及输入与输出。对于函数flatten来说：
+    //函数作用：将一个二叉树，原地将它展开为链表
+    //输入：树的根节点
+    //输出：无
+    public void flatten(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        //将根节点左子树变成链表
+        flatten(root.left);
+        //右子树
+        flatten(root.right);
+        TreeNode temp = root.right;
+        //将树的右子树换成左子树
+        root.right = root.left;
+        //左子树置为空
+        root.left = null;
+        //找到右子树最后一个节点
+        while (root.right != null) {
+            root = root.right;
+        }
+        root.right = temp;
+    }
+
+    class Node {
+        public int val;
+        public Node left;
+        public Node right;
+        public Node next;
+
+        public Node() {
+        }
+
+        public Node(int _val) {
+            val = _val;
+        }
+        public Node(int _val, Node _left, Node _right, Node _next) {
+            val = _val;
+            left = _left;
+            right = _right;
+            next = _next;
+        }
+    }
+
+    /*
+    * 116. 填充每个节点的下一个右侧节点指针
+    * */
+    public Node connect(Node root) {
+        if (root == null) {
+            return null;
+        }
+        if (root.left != null) {
+            root.left.next = root.right;
+        }
+        if (root.right != null) {
+            root.right.next = (root.next != null ? root.next.left : null);
+        }
+        connect(root.left);
+        connect(root.right);
+        return root;
+    }
+    /*
+    * 117. 填充每个节点的下一个右侧节点指针 II
+     * */
+    public Node connect117(Node root) {
+        //需要短路
+        if (root == null||(root.left==null&&root.right==null)) {
+            return root;
+        }
+        if (root.left != null && root.right != null) {
+            root.left.next = root.right;
+            //寻找下一个节点
+            root.right.next = getNextNode(root);
+        }
+        if (root.left == null) {
+            root.right.next=getNextNode(root);
+        }
+        if (root.right == null) {
+            root.left.next = getNextNode(root);
+        }
+        //先递归生成右子树，因为左子树的next需要右子树
+        connect(root.right);
+        connect(root.left);
+        return root;
+    }
+
+    private Node getNextNode(Node node) {
+        //寻找头节点的next节点
+        while (node.next != null) {
+            if (node.next.left != null) {
+                return node.next.left;
+            }
+            if (node.next.right != null) {
+                return node.next.right;
+            }
+            node = node.next;
+        }
+        return null;
+    }
 
     public static void main(String[] args) {
         int[] s1 = new int[]{0};
